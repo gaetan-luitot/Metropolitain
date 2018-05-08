@@ -16,4 +16,4 @@ class Perso(): # On définit notre classe, que l'on appelle "Perso" :
 		self.social = social # Ses points en social
 		self.scene = scene # La scène à laquel il se trouve dans l'histoire
 		self.pos = pos # Sa poistion dans la scène ( éxemple : [4][3] )
-		self.mike = mike # Si le personnage continue l'histoire avec mike
+		self.mike = mike # Si le personnage continue l'histoire avec mike ou non
