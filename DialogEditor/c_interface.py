@@ -68,80 +68,92 @@ class Interface:
 		self.LoadMenu() # On charge le menu au début
 		self.Start() # On commence la boucle 
 
+
+
 	def Start(self): # start mainloop
-		self.editor.mainloop()
+		self.editor.mainloop() # On commence la boucle Tkinter
+
+
 
 	def Define(self): # Création de tout les widgets de base
 		# Paned Windows :
+		# Ce sont deux barres une verticale et une horizontale que je vais utiliser pour positioner des widgets avec des pixels
 		self.X = PanedWindow(self.editor, orient = HORIZONTAL)
 		self.Y = PanedWindow(self.editor, orient = HORIZONTAL)
-		# Canvas :
+		# Canvas : # On met un fond noir 
 		self.Fond = Canvas(self.editor, bg = 'black', width= 640, height = 460)
 		# LabelFrame :
 		self.X.add(Label(self.editor, text = '', bg = 'black', anchor = NW, width = 91))
 		self.Y.add(Label(self.editor, text = '', bg = 'black', anchor = NW, width = 2, height = 31))
-		# On affiche tout :
+		# On affiche tout avec la fonction grid :
 		self.X.grid(columnspan = 640, rowspan = 460, row = 0, column = 0, sticky = NW)
 		self.Y.grid(rowspan = 460, columnspan = 640, row = 0, column = 0, sticky = NW)
 		self.Fond.grid(rowspan = 460, columnspan = 640, row = 0, column = 0, sticky = NW)
 
-	def LoadMenu(self):
-		print("I: Chargement du menu")
+
+
+	def LoadMenu(self): # Fonction qui charge le menu
+		print("I: Chargement du menu") # On indique qu'on charge le menu à l'utilisateur
 		# Entry
-		self.Fichier = Entry(self.editor, textvariable = self.nomFichierBoite, width = 18) # Nom du Fichier à charger ou à créer
+		self.Fichier = Entry(self.editor, textvariable = self.nomFichierBoite, width = 18) # Entry qui va contenir le nom du Fichier à charger ou à créer
 
 		# Button :
-		self.New = Button(self.editor, text = "Créer", command = lambda: self.NewScene(self.nomFichierBoite.get())) # Créer une nouvelle boite
-		self.Load = Button(self.editor, text = "Charger", command = lambda: self.LoadScene(self.nomFichierBoite.get())) # Charger une boite déjà existante
+		self.New = Button(self.editor, text = "Créer", command = lambda: self.NewScene(self.nomFichierBoite.get())) # Bouton qui va créer une nouvelle boite
+		self.Load = Button(self.editor, text = "Charger", command = lambda: self.LoadScene(self.nomFichierBoite.get())) # Bouton qui va charger une boite déjà existante
 
-		self.PackMenu() # On charge les éléments du Menu
+		self.PackMenu() # On lance la fonction qui charge les éléments du Menu
 
-	def PackMenu(self):
+
+
+	def PackMenu(self): # On affiche les éléments du menu qu'on à précement chargé
 		# Label :
 		self.Fichier.grid(columnspan = 640, rowspan = 460, row = 100, column = 150, sticky = NW)
 		# Button :
 		self.New.grid(columnspan = 640, rowspan = 460, row = 150, column = 150, sticky = NW)
 		self.Load.grid(columnspan = 640, rowspan = 460, row = 150, column = 225, sticky = NW)
 
-	def ClearMenu(self):
-		print("I: Déchargement du menu")
+
+
+	def ClearMenu(self): # Fonction qui suprimme tout les widgets du menu
+		print("I: Déchargement du menu") # On indique à l'utilisateur qu'on décharge le menu
 		self.New.grid_forget()
 		self.Load.grid_forget()
 		self.Fichier.grid_forget()
 
-	def LoadEditeur(self):
+
+
+	def LoadEditeur(self): # Fonction qui charge les widgets pour l'éditeur de scène
 		print("I: Chargement de l'interface d'édition")
 		# LabelFrame :
-		self.TopHelp = Label(self.editor, textvariable = self.nbBox, bg = 'white', width = 20) # Help : Nombre de chainages crées
-		self.TopHelpTwo = Label(self.editor, textvariable = self.nbBoxRep, bg = 'white', width = 20) # Help : [à définir]
-		self.TexteLabel = Label(self.editor, textvariable = self.texteDialogue, bg = 'white', width = 75, height = 10, wraplength = self.lenghtOS, anchor = NW) # Affichage du texte écrit
-		self.InfoPosVar = Label(self.editor, textvariable = self.pos, bg = 'white', width = 5, height = 2) # Help : Position actuel
+		self.TopHelp = Label(self.editor, textvariable = self.nbBox, bg = 'white', width = 20) # Label qui indique le nombre de chainages crées
+		self.TopHelpTwo = Label(self.editor, textvariable = self.nbBoxRep, bg = 'white', width = 20) # Label qui indique le nombre de chainages avec des réponses créer
+		self.TexteLabel = Label(self.editor, textvariable = self.texteDialogue, bg = 'white', width = 75, height = 10, wraplength = self.lenghtOS, anchor = NW) # Label qui affichage du texte que l'utilisateur écrit
+		self.InfoPosVar = Label(self.editor, textvariable = self.pos, bg = 'white', width = 5, height = 2) # Label qui idique la position actuel de l'utilisateur dans la scène
 
 		# Entry :
-		self.Texte = Entry(self.editor, textvariable = self.texteDialogue, width = 88) # Texte du PNJ 
-		self.Rep1 = Entry(self.editor, textvariable = self.texteRep1, width = 104) # Réponse 1 du PJ
-		self.Rep2 = Entry(self.editor, textvariable = self.texteRep2, width = 104) # Réponse 2 du PJ
-		self.Rep3 = Entry(self.editor, textvariable = self.texteRep3, width = 104) # Réponse 3 du PJ
-		self.EntryxRep1 = Entry(self.editor, textvariable = self.xRep1, width = 2) # 
-		self.EntryyRep1 = Entry(self.editor, textvariable = self.yRep1, width = 2)
-		self.EntryxRep2 = Entry(self.editor, textvariable = self.xRep2, width = 2)
-		self.EntryyRep2 = Entry(self.editor, textvariable = self.yRep2, width = 2)
-		self.EntryxRep3 = Entry(self.editor, textvariable = self.xRep3, width = 2)
-		self.EntryyRep3 = Entry(self.editor, textvariable = self.yRep3, width = 2)
-		self.E_FunctionRep1 = Entry(self.editor, textvariable = self.FunctionRep1, width = 14)
-		self.E_FunctionRep2 = Entry(self.editor, textvariable = self.FunctionRep2, width = 14)
-		self.E_FunctionRep3 = Entry(self.editor, textvariable = self.FunctionRep3, width = 14)
-		self.E_XGoto = Entry(self.editor, textvariable = self.XGoTo, width = 2)
-		self.E_YGoto = Entry(self.editor, textvariable = self.YGoTo, width = 2)
-
+		self.Texte = Entry(self.editor, textvariable = self.texteDialogue, width = 88) # Entry où l'utilisateur va pouvoir écrire ce qu'il se passe dans ce chainon
+		self.Rep1 = Entry(self.editor, textvariable = self.texteRep1, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 1 que le joueur va pouvoir choisir
+		self.Rep2 = Entry(self.editor, textvariable = self.texteRep2, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 2 que le joueur va pouvoir choisir
+		self.Rep3 = Entry(self.editor, textvariable = self.texteRep3, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 3 que le joueur va pouvoir choisir
+		self.EntryxRep1 = Entry(self.editor, textvariable = self.xRep1, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 1 pointe
+		self.EntryyRep1 = Entry(self.editor, textvariable = self.yRep1, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 1 pointe
+		self.EntryxRep2 = Entry(self.editor, textvariable = self.xRep2, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 2 pointe
+		self.EntryyRep2 = Entry(self.editor, textvariable = self.yRep2, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 2 pointe
+		self.EntryxRep3 = Entry(self.editor, textvariable = self.xRep3, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 3 pointe
+		self.EntryyRep3 = Entry(self.editor, textvariable = self.yRep3, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 3 pointe
+		self.E_FunctionRep1 = Entry(self.editor, textvariable = self.FunctionRep1, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 1 va influencer sur quelque chose
+		self.E_FunctionRep2 = Entry(self.editor, textvariable = self.FunctionRep2, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 2 va influencer sur quelque chose
+		self.E_FunctionRep3 = Entry(self.editor, textvariable = self.FunctionRep3, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 3 va influencer sur quelque chose
+		self.E_XGoto = Entry(self.editor, textvariable = self.XGoTo, width = 2) # Entry ou l'utilisateur va pouvoir écrire la position x vers laquel il souhaite aller
+		self.E_YGoto = Entry(self.editor, textvariable = self.YGoTo, width = 2) # Entry ou l'utilisateur va pouvoir écrire la position y vers laquel il souhaite aller
 
 		# Button :
 		self.B_Save = Button(self.editor, text = "Save", command = self.Save) # Bouton pour sauvegarder la boite
 		self.B_Delete = Button(self.editor, text = "Delete", command = self.Delete) # Bouton pour sauvegarder la boite
 		self.B_Debug = Button(self.editor, text = "Debug", command = self.Debug) # Bouton afficher à quoi ressemble la boite
 		self.B_Return = Button(self.editor, text = "Return", command = self.Return) # Bouton de navigation à travers la boite : retourner en arrière
-		self.B_Mike = Button(self.editor, text = "M", command = self.Mike)
-		self.B_Jet1 = Button(self.editor, text = "Jet", command = lambda: self.Jet(0), width = 2)  
+		self.B_Mike = Button(self.editor, text = "M", command = self.Mike) # Bouton pour configurer le dialogue de mike pour ce chainon
+		self.B_Jet1 = Button(self.editor, text = "Jet", command = lambda: self.Jet(0), width = 2) # Bouton pour configurer si le réponse 1 va 
 		self.B_Jet2 = Button(self.editor, text = "Jet", command = lambda: self.Jet(1), width = 2)  
 		self.B_Jet3 = Button(self.editor, text = "Jet", command = lambda: self.Jet(2), width = 2)  
 		self.ButtonRep1 = Button(self.editor, text = "Réponse 1", command = lambda: self.ApplyCurrent(0), width = 13) # Btn navigation : aller vers chainage suivant
@@ -157,6 +169,8 @@ class Interface:
 
 		self.PackEditeur() # On affiche le tout
 		
+
+
 	def PackEditeur(self): # Update de tout les Widgets
 		# UI help :
 		self.TopHelp.grid(columnspan = 640, rowspan = 460, row = 0, column = 210, sticky = NW)
@@ -203,6 +217,8 @@ class Interface:
 		self.E_XGoto.grid(columnspan = 640, rowspan = 460, row = 32, column = 442, sticky = NW)
 		self.E_YGoto.grid(columnspan = 640, rowspan = 460, row = 32, column = 472, sticky = NW)
 
+
+
 	def ClearEditeur(self):
 		print("I: Déchargement de l'interface d'éditions")
 		self.TopHelp.grid_forget()
@@ -241,6 +257,8 @@ class Interface:
 		self.E_YGoto.grid_forget()
 		self.B_Goto.grid_forget()
 
+
+
 	def Return(self):
 		if (self.x != 0):
 			self.SetToBox()
@@ -249,6 +267,7 @@ class Interface:
 			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
 			del self.debugArray[-1]
 			self.GetFromBox()
+
 
 
 	def ApplyCurrent(self, nbButton): # On ajoute à notre tableau box le chainage que l'on vient de créer
@@ -267,6 +286,8 @@ class Interface:
 				self.y = self.ZtoYrep(self.x, self.chainageActuel.Reponses[nbButton].pos.z)
 			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
 			self.GetFromBox()
+
+
 
 	def SetToBox(self): # On assignent les infos rentrés dans les Entrys à notre variables chainageActuel
 		listeTemporaire = []
