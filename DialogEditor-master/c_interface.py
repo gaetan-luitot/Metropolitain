@@ -257,13 +257,16 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 			print("I: La réponse est vide, veuillez en créer une pour pouvoir y accéder !")
 		else:
 			self.SetToBox()
+			temp = self.x
 			self.debugArray.append([Vecteur(self.x, self.y) ,str(Vecteur(self.x, self.y))])
 			self.x = self.chainageActuel.Reponses[nbButton].pos.x
 			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-			if (self.x != 0):
+			if (temp == self.chainageActuel.Reponses[nbButton].pos.x +1):
 				self.y = self.ZtoYrep(self.x - 1, self.chainageActuel.Reponses[nbButton].pos.z)
-			else:
+			elif (self.x == 0):
 				self.y = self.ZtoYrep(self.x, self.chainageActuel.Reponses[nbButton].pos.z)
+			else:
+				self.y = self.chainageActuel.Reponses[nbButton].pos.z
 			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
 			self.GetFromBox()
 
@@ -461,20 +464,23 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		self.LoadEditeur()
 		self.GetFromBox()
 		print("I: Création du point d'origine [0][0]")
-
+		
 	def Save(self):
 		self.SetToBox()
 		self.box.Save()
 		self.GetFromBox()
 		print("I: Sauvegarde effectuée")
 		
+
 	def ZtoYchai(self, index, indiceToFind):
 		for i in range(0, len(self.box[index])):
 			if(self.box[index][i].indice == indiceToFind):
 				print("return -> " + str(x))
 				return int(i)
 
+
 	def ZtoYrep(self, index, indiceToFind):
+		print(str(index) + " " + str(indiceToFind))
 		for i in range(0, len(self.box[index])):
 			for x in range(0, len(self.box[index][i].Reponses)):
 				if (self.box[index][i].Reponses[x].pos.z == indiceToFind):
