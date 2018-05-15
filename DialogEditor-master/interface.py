@@ -5,8 +5,8 @@ import time
 import tkinter as tk
 import tkinter.font as tkFont
 import pickle
-from c_Save import Save
-from c_Vecteur import Vecteur
+#from c_Save import Save
+#from c_Vecteur import Vecteur
 
 
 ######################################
@@ -27,7 +27,7 @@ texteMike = StringVar()
 photo = PhotoImage(file="brouillage.gif")
 MikEtat= False
 font10 = "-family {Nimbus Mono L} -size 18 -weight normal "
-perso = Save(Vecteur(0,0), 0, 0, listedObjets = [])
+#perso = Save(Vecteur(0,0), 0, 0, listedObjets = [])
 
 
 ######################################
@@ -85,18 +85,18 @@ def mike():#gif de mike (place ou cache)
         labM.place_forget()
 
 #A partir d'ici, je code le jeu :
+"""
 def Save(self):
         with open('sauvegarde.save', 'wb') as fichier:
             mon_pickler = pickle.Pickler(fichier)
             mon_pickler.dump(self._tableau)
 
-    def Load(self):
-        try:
-            with open('sauvegarde.save', 'rb') as fichier:
-                mon_depickler = pickle.Unpickler(fichier)
-                boite_recupere = mon_depickler.load()
-                self._tableau = boite_recupere
-
+def Load(self):
+    with open('sauvegarde.save', 'rb') as fichier:
+        mon_depickler = pickle.Unpickler(fichier)
+        boite_recupere = mon_depickler.load()
+        self._tableau = boite_recupere
+"""
 def Affichage():
     global Rep1
     global Rep2
