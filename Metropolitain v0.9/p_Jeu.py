@@ -27,13 +27,14 @@ Rep1 = StringVar()
 Rep2 = StringVar()
 Rep3 = StringVar()
 texteMike = StringVar()
+texteMike.set("...")
 photo = PhotoImage(file="brouillage.gif")
-font10 = "-family {Nimbus Mono L} -size 18 -weight normal "
-font13 = tkFont.Font(family="Crimes Times Six", size=80)
-listedObjets = [False] * 10
-perso = Save(Vecteur(0,0), 10, -2, listedObjets, False)
+font10 = tkFont.Font(family="Courier New", size=16)
+font13 = tkFont.Font(family="Viner Hand ITC", size=80)
+listedObjets = ["Briquet", "Couteau"]
+perso = Save(Vecteur(0,0), 10, 3, [""] * 10, False)
 can = [] 
-objets = ["Couteau", "Briquet"]
+
 
 ######################################
 # Déclaration des Fonctions :
@@ -67,7 +68,10 @@ class Fenetre(tkinter.Frame): #fenetre de jeu principal
      centrefenetre (fen)
      fen.resizable(width=False, height=False)
      fen.title("Jeu Isn")
-     fen['bg']='grey'
+     fen['bg']='black'
+
+def TM():
+    labM.place(x=576,y=602)
 
 def inventaire():#place ou cache l'inventaire 
     global etatB
@@ -80,7 +84,7 @@ def inventaire():#place ou cache l'inventaire
 
 def Functions(texte):
     global perso
-    
+    print(texte)
     if (texte[0] == '0'): # Gain PV
         print("Le PJ gagne : " + texte[1] + " pv")
         perso.pv += int(texte[1])
@@ -90,15 +94,11 @@ def Functions(texte):
 
     elif (texte[0] == '2'): # Gain Objet
         print("Le PJ gagne l'objet n° " + texte[1])
-        canI.itemconfigure(can[int(texte[1])], text = objets[0])
+        perso.objets[int(texte[1])] = listedObjets[int(texte[1])]
+        canI.itemconfigure(can[int(texte[1])], text = listedObjets[int(texte[1])])
         fen.update()
 
-    elif (texte[0] == '3'): # Perte Objet
-        print("Le PJ perd l'objet n° " + texte[1] + " de son inventaire")
-        canI.itemconfigure(can[int(texte[1])], text = objets[0])
-        fen.update()
-
-    elif (texte[0] == '4'): # On détermine le personnage
+    elif (texte[0] == '3'): # On détermine le personnage
         if (texte[1] == '0'):
             perso.archetype = 0
             perso.pv = Caracts(0)[0]
@@ -112,7 +112,7 @@ def Functions(texte):
             perso.pv = Caracts(2)[0]
             print("Le personnage est l'intellectuel !")
 
-    elif (texte[0] == '5'): #On cache ou non la réponse
+    elif (texte[0] == '4'): #On cache ou non la réponse
         if (texte[1] == '0') and perso.archetype == 0:
             print("True")
             return True
@@ -126,22 +126,26 @@ def Functions(texte):
             print("False")
             return False
 
-    elif (texte[0] == '6'): # On gagne ou perd mike :)
+    elif (texte[0] == '5'): # On gagne ou perd mike :)
         if (texte[1] == '0'):
+            print("A plus mike")
             perso.mike = False
         elif (texte[1] == '1'):
+            print("mike oui !")
             perso.mike = True
         
 
 def mike():#gif de mike (place ou cache)
     global perso
     if perso.mike == True:
+        BM.place(x=755,y=315)
         Mikec.place(x= 570, y=342)
-        labM.place(x= 576,y= 602)
         update()
     else:
+        BM.place_forget()
         Mikec.place_forget()
         labM.place_forget()
+        fen.update()
 
 def Save():
     global perso
@@ -162,6 +166,8 @@ def Load():
             mon_depickler = pickle.Unpickler(fichier)
             perso = mon_depickler.load()
             chainage = Scene[perso.pos.x][perso.pos.z]
+            for i in range(0, len(perso.objets)):
+                canI.itemconfigure(can[i], text = listedObjets[i])
     except:
         print("Pas de sauvegarde donc on commence une nouvelle histoire")
         chainage = Scene[0][0]
@@ -178,6 +184,8 @@ def Caracts(x): #Je définis les caractéristiques.
         return [5,8,5]#Personnage social
     elif x == 2:
         return [5,5,8] #Personnage mental
+    elif x == 3: # Personnage pas encore définie
+        return [5, 5, 5]
 
 def AffichageManager():
     global MikeEtat
@@ -188,6 +196,7 @@ def AffichageManager():
         perso.mike = True
         mike()
     else:
+        mike()
         Affichage()
     #Save()
 
@@ -198,7 +207,7 @@ def Affichage():
     Rep1.set("")
     Rep2.set("")
     Rep3.set("")
-    texteMike.set("")
+    texteMike.set("...")
     Animation() # On affiche la description avec un animation
     if (len(chainage.Reponses) > 0):
         if chainage.Reponses[0].hiden == False:
@@ -234,6 +243,8 @@ def de(n, difficulte):#lance de de
         carac = 2
     alea = randint(0,10)
     print("Jet de " + n)
+    print(str(perso.archetype) + " " + str(carac))
+    print(str(Caracts(perso.archetype)[carac]))
     total = Caracts(perso.archetype)[carac] + int(difficulte)
     print("Le joueur à fait : " + str(alea) + " sur " + str(total))
     if alea <= total :
@@ -246,7 +257,7 @@ def de(n, difficulte):#lance de de
 def voyage(n):
     global chainage
     global perso
-    IsGameOver()
+    IsGameOver() # On vérifie si le personnage est mort ou non.
     if n == 0 and Rep1.get() != "":
         if (str(type(chainage.Reponses[n].extend)) != "<class 'c_reponse.Extension'>"):
             perso.pos = Vecteur(chainage.Reponses[n].pos.x, chainage.Reponses[n].pos.z)
@@ -318,7 +329,7 @@ fen.protocol("WM_DELETE_WINDOW", SaveAndQuit)
 foreground = tk.Canvas(fen,width= 845,height=330,borderwidth=1, bg = 'black')
 foreground.place(x=5, y=5)
 
-Description = Label(foreground, padx = 20, width= 57,height=11,borderwidth=1,textvariable = Descrip, wraplength = 800, bg = 'black', fg = 'white', font = font10, anchor = W, justify = 'left')
+Description = Label(foreground, padx = 20, width= 80,height=11,borderwidth=1,textvariable = Descrip, wraplength = 800, bg = 'black', fg = 'white', font = font10, anchor = W, justify = 'left')
 Description.place(x=5, y=5)
 
 Mikec = tk.Canvas(fen, width=282, height=300, bg='white')
@@ -384,17 +395,24 @@ canend.place(x=0,y=0)
 canend.create_text(860/2,650/2,text='GAME OVER',font=font13,fill='RED')
 canend.place_forget()
 
+#button Mike
+BM=Button(fen,bg='GREY',text='Mike',width=10, height=1,borderwidth=1,command=TM,font=font2)
+BM.place(x=755,y=315)
+BM.place_forget()
+
+
+
 ######################################
 # Programme :
 ######################################
-#J'importe le fichier S1.save qui a été préalablement écrit : c'est l'histoire.
+#J'importe le fichier S1.save (grâce à la librairie pickle) qui a été préalablement écrit : c'est l'histoire.
 with open('S1.save', 'rb') as fichier:
     mon_depickler = pickle.Unpickler(fichier)
     global Scene
     Scene = mon_depickler.load()
 
-Load()
+Load() # On essaye de charger une sauvegarde
 
-AffichageManager()
+AffichageManager() # On affiche la scène où se trouve le joueur
  
-fen.mainloop()
+fen.mainloop() # On lance la boucle principale de tkinter
