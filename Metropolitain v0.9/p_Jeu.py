@@ -31,7 +31,7 @@ texteMike.set("...")
 photo = PhotoImage(file="brouillage.gif")
 font10 = tkFont.Font(family="Courier New", size=16)
 font13 = tkFont.Font(family="Viner Hand ITC", size=80)
-listedObjets = ["Briquet", "Couteau"]
+listedObjets = ["Briquet", "Couteau", "objet3", "objet4", "objet5", "objet6", "objet7", "objet8", "objet9", "objet10"]
 perso = Save(Vecteur(0,0), 10, 3, [""] * 10, False)
 can = [] 
 
@@ -167,7 +167,8 @@ def Load():
             perso = mon_depickler.load()
             chainage = Scene[perso.pos.x][perso.pos.z]
             for i in range(0, len(perso.objets)):
-                canI.itemconfigure(can[i], text = listedObjets[i])
+                if (perso.objets[i] != ""):
+                    canI.itemconfigure(can[i], text = listedObjets[i])
     except:
         print("Pas de sauvegarde donc on commence une nouvelle histoire")
         chainage = Scene[0][0]

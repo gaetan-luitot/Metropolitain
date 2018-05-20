@@ -3,178 +3,195 @@ Cet classe, Interface, va être la classe qui va gérer la création d'une inter
 c'est grâce à elle que un utilisateur va pouvoir créer une scène, donc sont travail est de communiqué entre l'utilisateur et la scène en création.
 """
 
-import sys
 from tkinter import *
 from c_boite import *
 from c_chainage import *
 from c_reponse import *
 from tkinter.messagebox import *
-from sys import platform
+from sys import platform, stdout
 
-"""
-if platform == "linux" or platform == "linux2":
-    # linux
-elif platform == "darwin":
-    # OS X
-elif platform == "win32":"""
-
-
-class Interface: # On définit notre classe, que l'on appelle "Interface" :
+class Interface:
 
 	def __init__(self): # Constructeur :
-		try: self.color = sys.stdout.shell
+
+		# Prérequis avant de créer notre fenêtre :  
+		if (platform == "linux" or platform == "linux2"): # tkinter est géré différement sur linux et sur windows
+			self.lenghtOS = 600 # Les carractère prennent moins de place sur linux
+			self.tailleEditeur = 850 # Et la fenêtre est plus petite
+		else: # Si l'utilisateur n'est pas sur linux alors on met nos variables comme ceci :
+			self.lenghtOS = 520
+			self.tailleEditeur = 640
+
+		# Les lignes de codes suivantes sont requise pour afficher des couleurs sur l'IDLE de python
+		try: self.color = stdout.shell
 		except AttributeError: raise RuntimeError("Use IDLE")
-		# Fenêtre :
+
+		# On créer notre Fenêtre Tkinter :
 		self.editor = Tk() # On créer une fenêtre "editor"
 		self.editor['bg']='black' # On met le fond de couleur noir 
-		self.editor.title("Editeur de Scène") # On nomme la fenêtre 
-		self.editor.geometry("640x460") # On définit une taille pour la fenêtre
+		self.editor.title("Editeur de Scène") # On nomme la fenêtre "Editeur de Scène"
+		self.editor.geometry(str(self.tailleEditeur) + "x460") # On définit une taille pour la fenêtre avec différentes valeurs selon le système d'exploitation
 		self.editor.resizable(0,0) # On fixe la taille pour qu'on ne puisse pas la modifier
 
-		# Variables :
-		self.lenghtOS = 520
-		self.debugArray = []
-		self.box = Boite("default")
-		self.nbBox = StringVar()
-		self.nbBoxRep = StringVar()
-		self.xRep1 = StringVar()
-		self.yRep1 = StringVar()
-		self.xRep2 = StringVar()
-		self.yRep2 = StringVar()
-		self.xRep3 = StringVar()
-		self.yRep3 = StringVar()
-		self.FunctionRep1 = StringVar()
-		self.FunctionRep2 = StringVar()
-		self.FunctionRep3 = StringVar()
-		self.texteRep1 = StringVar() # Texte de la réponse 1 actuel
-		self.texteRep2 = StringVar() # Texte de la réponse 2 actuel
-		self.texteRep3 = StringVar() # Texte de la réponse 3 actuel
-		self.XGoTo = StringVar()
-		self.YGoTo = StringVar()
-		self.texteDialogue = StringVar() # Texte du dialogue de la Scène ou du PNJ
-		self.texteDialogue.set("[Texte]")
-		self.x = 0 # x position actuel
-		self.y = 0 # y position actuel
-		self.pos = StringVar() # Texte de la position actuel
-		self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) #
-		self.nomFichierBoite = StringVar() # Texte de la position actuel
-		self.nomFichierBoite.set("Nom du fichier")
-		self.chainageActuel = Chainage(self.texteDialogue.get(), [[self.texteRep1.get(), 0, 0, False], [self.texteRep2.get(), 0, 0, False],[self.texteRep3.get(), 0, 0, False]], 0)
-		self.hiden1 = IntVar()
-		self.hiden2 = IntVar()
-		self.hiden3 = IntVar()
+		# Variables que l'on va avoir besoins :		
+		self.debugArray = [] # C'est un tableau qui va contenir les positions où l'utilisateur est passé dans la création de la scène
+		self.box = Boite("default") # Scène actuel sur laquel l'uitlisateur travail, objet de type "Boite"
+		# Les variables StringVar() sont des objets utilisés par Tkinter pour utiliser des variables de type str,
+		# qui s'actualise à chaque fois qu'on change la phrase.
+		self.nbBox = StringVar() # Représente le nombre de chainons créée dans la scène
+		self.nbBoxRep = StringVar() # Représente le nombre de chainons avec des réponses créée dans la scène
+		self.xRep1 = StringVar() # Représente la position x du chainon vers laquel la réponse 1 pointe
+		self.yRep1 = StringVar() # Représente la position y du chainon vers laquel la réponse 1 pointe
+		self.xRep2 = StringVar() # Représente la position x du chainon vers laquel la réponse 2 pointe
+		self.yRep2 = StringVar() # Représente la position y du chainon vers laquel la réponse 2 pointe
+		self.xRep3 = StringVar() # Représente la position x du chainon vers laquel la réponse 3 pointe
+		self.yRep3 = StringVar() # Représente la position y du chainon vers laquel la réponse 3 pointe
+		self.FunctionRep1 = StringVar() # Représente une variable str si la réponse 1 affecte quelque chose
+		self.FunctionRep2 = StringVar() # Représente une variable str si la réponse 2 affecte quelque chose
+		self.FunctionRep3 = StringVar() # Représente une variable str si la réponse 3 affecte quelque chose
+		self.texteRep1 = StringVar() # Texte affiché au joueur de la réponse 1 actuel
+		self.texteRep2 = StringVar() # Texte affiché au joueur de la réponse 2 actuel
+		self.texteRep3 = StringVar() # Texte affiché au joueur de la réponse 3 actuel
+		self.XGoTo = StringVar() # répresente la position x de la boite vers laquel le joueur veut aller
+		self.YGoTo = StringVar() # répresente la position y de la boite vers laquel le joueur veut aller
+		self.texteDialogue = StringVar() # Représente le texte qui décrit se qu'il se passe en réponse à la réponse du joueur
+		self.x = 0 # variable int représentant a position x à laquel le joueur se trouve dans la boite
+		self.y = 0 # variable int représentant a position y à laquel le joueur se trouve dans la boite
+		self.pos = StringVar() # Texte qui représente la position actuel de l'utilisateur dans la boite
+		self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) # on définie la position actuelle en x = 0 | y = 0 de base
+		self.nomFichierBoite = StringVar() # Texte du nom de la scène
+		self.nomFichierBoite.set("Nom du fichier") # Définition par défaut du nom de la scène
+		self.chainageActuel = Chainage(self.texteDialogue.get(), Chainage.d_Reponses, 0) #[[self.texteRep1.get(), 0, 0, False], [self.texteRep2.get(), 0, 0, False],[self.texteRep3.get(), 0, 0, False]], 0)
+		self.hiden1 = IntVar() # Variable Int de Tkinter égal à 1 ou 0 pour savoir si par défaut la réponse 1 est caché au joueur
+		self.hiden2 = IntVar() # Variable Int de Tkinter égal à 1 ou 0 pour savoir si par défaut la réponse 2 est caché au joueur
+		self.hiden3 = IntVar() # Variable Int de Tkinter égal à 1 ou 0 pour savoir si par défaut la réponse 3 est caché au joueur
 		
-		self.Define() # On créer notre fenêtre de base
+		self.Define() # On lance notre fonction Define() qui créer notre fenêtre de base
 		self.LoadMenu() # On charge le menu au début
-		self.Start() # On commence une boucle Tkinter  
+		self.Start() # On commence la boucle 
+
+
 
 	def Start(self): # start mainloop
-		self.editor.mainloop()
+		self.editor.mainloop() # On commence la boucle principale Tkinter
+
+
 
 	def Define(self): # Création de tout les widgets de base
 		# Paned Windows :
+		# Ce sont deux barres une verticale et une horizontale que je vais utiliser pour positioner des widgets avec des pixels
 		self.X = PanedWindow(self.editor, orient = HORIZONTAL)
 		self.Y = PanedWindow(self.editor, orient = HORIZONTAL)
-		# Canvas :
+		# Canvas : # On met un fond noir 
 		self.Fond = Canvas(self.editor, bg = 'black', width= 640, height = 460)
 		# LabelFrame :
 		self.X.add(Label(self.editor, text = '', bg = 'black', anchor = NW, width = 91))
 		self.Y.add(Label(self.editor, text = '', bg = 'black', anchor = NW, width = 2, height = 31))
-		# On affiche tout :
+		# On affiche tout avec la fonction grid :
 		self.X.grid(columnspan = 640, rowspan = 460, row = 0, column = 0, sticky = NW)
 		self.Y.grid(rowspan = 460, columnspan = 640, row = 0, column = 0, sticky = NW)
 		self.Fond.grid(rowspan = 460, columnspan = 640, row = 0, column = 0, sticky = NW)
 
-	def LoadMenu(self):
-		print("I: Chargement du menu")
+
+
+	def LoadMenu(self): # Fonction qui charge le menu
+		print("I: Chargement du menu") # On indique qu'on charge le menu à l'utilisateur
 		# Entry
-		self.Fichier = Entry(self.editor, textvariable = self.nomFichierBoite, width = 18) # Nom du Fichier à charger ou à créer
+		self.Fichier = Entry(self.editor, textvariable = self.nomFichierBoite, width = 18) # Entry qui va contenir le nom du Fichier à charger ou à créer
 
 		# Button :
-		self.New = Button(self.editor, text = "Créer", command = lambda: self.NewScene(self.nomFichierBoite.get())) # Créer une nouvelle boite
-		self.Load = Button(self.editor, text = "Charger", command = lambda: self.LoadScene(self.nomFichierBoite.get())) # Charger une boite déjà existante
+		self.New = Button(self.editor, text = "Créer", command = lambda: self.NewScene(self.nomFichierBoite.get())) # Bouton qui va créer une nouvelle boite
+		self.Load = Button(self.editor, text = "Charger", command = lambda: self.LoadScene(self.nomFichierBoite.get())) # Bouton qui va charger une boite déjà existante
 
-		self.PackMenu() # On charge les éléments du Menu
+		self.PackMenu() # On lance la fonction qui charge les éléments du Menu
 
-	def PackMenu(self):
+
+
+	def PackMenu(self): # On affiche les éléments du menu qu'on à précement chargé
 		# Label :
 		self.Fichier.grid(columnspan = 640, rowspan = 460, row = 100, column = 150, sticky = NW)
 		# Button :
 		self.New.grid(columnspan = 640, rowspan = 460, row = 150, column = 150, sticky = NW)
 		self.Load.grid(columnspan = 640, rowspan = 460, row = 150, column = 225, sticky = NW)
 
-	def ClearMenu(self):
-		print("I: Déchargement du menu")
+
+
+	def ClearMenu(self): # Fonction qui suprimme tout les widgets du menu
+		print("I: Déchargement du menu") # On indique à l'utilisateur qu'on décharge le menu
 		self.New.grid_forget()
 		self.Load.grid_forget()
 		self.Fichier.grid_forget()
 
-	def LoadEditeur(self):
+
+
+	def LoadEditeur(self): # Fonction qui charge les widgets pour l'éditeur de scène
 		print("I: Chargement de l'interface d'édition")
 		# LabelFrame :
-		self.TopHelp = Label(self.editor, textvariable = self.nbBox, bg = 'white', width = 20) # Help : Nombre de chainages crées
-		self.TopHelpTwo = Label(self.editor, textvariable = self.nbBoxRep, bg = 'white', width = 20) # Help : [à définir]
-		self.TexteLabel = Label(self.editor, textvariable = self.texteDialogue, bg = 'white', width = 75, height = 10, wraplength = self.lenghtOS, anchor = NW) # Affichage du texte écrit
-		self.InfoPosVar = Label(self.editor, textvariable = self.pos, bg = 'white', width = 5, height = 2) # Help : Position actuel
+		self.TopHelp = Label(self.editor, textvariable = self.nbBox, bg = 'white', width = 20) # Label qui indique le nombre de chainages crées
+		self.TopHelpTwo = Label(self.editor, textvariable = self.nbBoxRep, bg = 'white', width = 20) # Label qui indique le nombre de chainages avec des réponses créer
+		self.TexteLabel = Label(self.editor, textvariable = self.texteDialogue, bg = 'white', width = 75, height = 10, wraplength = self.lenghtOS, anchor = NW) # Label qui affichage du texte que l'utilisateur écrit
+		self.InfoPosVar = Label(self.editor, textvariable = self.pos, bg = 'white', width = 5, height = 2) # Label qui idique la position actuel de l'utilisateur dans la scène
 
 		# Entry :
-		self.Texte = Entry(self.editor, textvariable = self.texteDialogue, width = 88) # Texte du PNJ 
-		self.Rep1 = Entry(self.editor, textvariable = self.texteRep1, width = 104) # Réponse 1 du PJ
-		self.Rep2 = Entry(self.editor, textvariable = self.texteRep2, width = 104) # Réponse 2 du PJ
-		self.Rep3 = Entry(self.editor, textvariable = self.texteRep3, width = 104) # Réponse 3 du PJ
-		self.EntryxRep1 = Entry(self.editor, textvariable = self.xRep1, width = 2)
-		self.EntryyRep1 = Entry(self.editor, textvariable = self.yRep1, width = 2)
-		self.EntryxRep2 = Entry(self.editor, textvariable = self.xRep2, width = 2)
-		self.EntryyRep2 = Entry(self.editor, textvariable = self.yRep2, width = 2)
-		self.EntryxRep3 = Entry(self.editor, textvariable = self.xRep3, width = 2)
-		self.EntryyRep3 = Entry(self.editor, textvariable = self.yRep3, width = 2)
-		self.E_FunctionRep1 = Entry(self.editor, textvariable = self.FunctionRep1, width = 14)
-		self.E_FunctionRep2 = Entry(self.editor, textvariable = self.FunctionRep2, width = 14)
-		self.E_FunctionRep3 = Entry(self.editor, textvariable = self.FunctionRep3, width = 14)
-		self.E_XGoto = Entry(self.editor, textvariable = self.XGoTo, width = 2)
-		self.E_YGoto = Entry(self.editor, textvariable = self.YGoTo, width = 2)
-
+		self.Texte = Entry(self.editor, textvariable = self.texteDialogue, width = 88) # Entry où l'utilisateur va pouvoir écrire ce qu'il se passe dans ce chainon
+		self.Rep1 = Entry(self.editor, textvariable = self.texteRep1, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 1 que le joueur va pouvoir choisir
+		self.Rep2 = Entry(self.editor, textvariable = self.texteRep2, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 2 que le joueur va pouvoir choisir
+		self.Rep3 = Entry(self.editor, textvariable = self.texteRep3, width = 104) # Entry où l'utilisateur va pouvoir écrire la réponse 3 que le joueur va pouvoir choisir
+		self.EntryxRep1 = Entry(self.editor, textvariable = self.xRep1, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 1 pointe
+		self.EntryyRep1 = Entry(self.editor, textvariable = self.yRep1, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 1 pointe
+		self.EntryxRep2 = Entry(self.editor, textvariable = self.xRep2, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 2 pointe
+		self.EntryyRep2 = Entry(self.editor, textvariable = self.yRep2, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 2 pointe
+		self.EntryxRep3 = Entry(self.editor, textvariable = self.xRep3, width = 2) # Entry où l'utilisateur va pouvoir écrire la position x du chainon vers laquel la réponse 3 pointe
+		self.EntryyRep3 = Entry(self.editor, textvariable = self.yRep3, width = 2) # Entry où l'utilisateur va pouvoir écrire la position y du chainon vers laquel la réponse 3 pointe
+		self.E_FunctionRep1 = Entry(self.editor, textvariable = self.FunctionRep1, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 1 va influencer sur quelque chose
+		self.E_FunctionRep2 = Entry(self.editor, textvariable = self.FunctionRep2, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 2 va influencer sur quelque chose
+		self.E_FunctionRep3 = Entry(self.editor, textvariable = self.FunctionRep3, width = 14) # Entry où l'utilisateur va pouvoir écrire si la réponse 3 va influencer sur quelque chose
+		self.E_XGoto = Entry(self.editor, textvariable = self.XGoTo, width = 2) # Entry ou l'utilisateur va pouvoir écrire la position x vers laquel il souhaite aller
+		self.E_YGoto = Entry(self.editor, textvariable = self.YGoTo, width = 2) # Entry ou l'utilisateur va pouvoir écrire la position y vers laquel il souhaite aller
 
 		# Button :
 		self.B_Save = Button(self.editor, text = "Save", command = self.Save) # Bouton pour sauvegarder la boite
 		self.B_Delete = Button(self.editor, text = "Delete", command = self.Delete) # Bouton pour sauvegarder la boite
 		self.B_Debug = Button(self.editor, text = "Debug", command = self.Debug) # Bouton afficher à quoi ressemble la boite
 		self.B_Return = Button(self.editor, text = "Return", command = self.Return) # Bouton de navigation à travers la boite : retourner en arrière
-		self.B_Mike = Button(self.editor, text = "M", command = self.Mike)
-		self.B_Jet1 = Button(self.editor, text = "Jet", command = lambda: self.Jet(0), width = 2)  
-		self.B_Jet2 = Button(self.editor, text = "Jet", command = lambda: self.Jet(1), width = 2)  
-		self.B_Jet3 = Button(self.editor, text = "Jet", command = lambda: self.Jet(2), width = 2)  
-		self.ButtonRep1 = Button(self.editor, text = "Réponse 1", command = lambda: self.ApplyCurrent(0), width = 13) # Btn navigation : aller vers chainage suivant
-		self.ButtonRep2 = Button(self.editor, text = "Réponse 2", command = lambda: self.ApplyCurrent(1), width = 13) # Btn navigation : aller vers chainage suivant
-		self.ButtonRep3 = Button(self.editor, text = "Réponse 3", command = lambda: self.ApplyCurrent(2), width = 13) # Btn navigation : aller vers chainage suivant
-		self.B_Menu = Button(self.editor, text = "Menu", command = self.Menu)
-		self.B_Goto = Button(self.editor, text = "Go !", command = self.GoTo)
+		self.B_Mike = Button(self.editor, text = "M", command = self.Mike) # Bouton pour configurer le dialogue de mike pour ce chainon
+		self.B_Jet1 = Button(self.editor, text = "Jet", command = lambda: self.Jet(0), width = 2) # Bouton pour configurer si le réponse 1 va avoir deux issues possible ou non
+		self.B_Jet2 = Button(self.editor, text = "Jet", command = lambda: self.Jet(1), width = 2) # Bouton pour configurer si le réponse 2 va avoir deux issues possible ou non
+		self.B_Jet3 = Button(self.editor, text = "Jet", command = lambda: self.Jet(2), width = 2) # Bouton pour configurer si le réponse 3 va avoir deux issues possible ou non
+		self.ButtonRep1 = Button(self.editor, text = "Réponse 1", command = lambda: self.ApplyCurrent(0), width = 13) # Btn navigation : aller vers chainage suivant de la réponse 1
+		self.ButtonRep2 = Button(self.editor, text = "Réponse 2", command = lambda: self.ApplyCurrent(1), width = 13) # Btn navigation : aller vers chainage suivant de la réponse 2
+		self.ButtonRep3 = Button(self.editor, text = "Réponse 3", command = lambda: self.ApplyCurrent(2), width = 13) # Btn navigation : aller vers chainage suivant de la réponse 3
+		self.B_Menu = Button(self.editor, text = "Menu", command = self.Menu) # Est le bouton qui va permettre à l'utilisateur de revenir en arrière
+		self.B_Goto = Button(self.editor, text = "Go !", command = self.GoTo) # Est le bouton qui va permettre à l'utilisiteur d'aller là ou il veut dans la scène
 
 		# CheckBox :
+		# Ce sont des boutons à cocher, si ils sont cochés cela veut dire que la réponse en question va être caché au joueur par défaut :
 		self.checkRep1 = Checkbutton(self.editor, text = "Cacher", variable = self.hiden1 , bg = 'white', activebackground = 'white', activeforeground = 'black', fg = 'black')
 		self.checkRep2 = Checkbutton(self.editor, text = "Cacher", variable = self.hiden2 , bg = 'white', activebackground = 'white', activeforeground = 'black', fg = 'black')
 		self.checkRep3 = Checkbutton(self.editor, text = "Cacher", variable = self.hiden3 , bg = 'white', activebackground = 'white', activeforeground = 'black', fg = 'black')
 
-		self.PackEditeur() # On affiche le tout
+		self.PackEditeur() # On affiche le tout sur notre fenêtre
 		
-	def PackEditeur(self): # Update de tout les Widgets
-		# UI help :
+
+
+	def PackEditeur(self): # On affiche sur la fenêtre tout les Widgets nécessaire à l'éditeur de scène (précedement créer)
+		# On place les aides pour l'utilisateur (le nombres de boites créer, celles configurés et la position où il se trouve dans le tableau) :
 		self.TopHelp.grid(columnspan = 640, rowspan = 460, row = 0, column = 210, sticky = NW)
 		self.TopHelpTwo.grid(columnspan = 640, rowspan = 460, row = 21, column = 210, sticky = NW)
 		self.InfoPosVar.grid(columnspan = 640, rowspan = 460, row = 100, column = 0, sticky = NW)
 
-		# UI Other:
+		# Les label Texte :
+		self.Texte.grid(columnspan = 640, rowspan = 460, row = 210, column = 55, sticky = NW)
+		self.TexteLabel.grid(columnspan = 640, rowspan = 460, row = 56, column = 55, sticky = NW)
+
+		# Les Boutons 
 		self.B_Save.grid(columnspan = 640, rowspan = 460, row = 0, column = 600, sticky = NW)
 		self.B_Return.grid(columnspan = 640, rowspan = 460, row = 0, column = 0, sticky = NW)
 		self.B_Debug.grid(columnspan = 640, rowspan = 460, row = 26, column = 589, sticky = NW)
 		self.B_Delete.grid(columnspan = 640, rowspan = 460, row = 26, column = 0, sticky = NW)
 		self.B_Mike.grid(columnspan = 640, rowspan = 460, row = 100, column = 600, sticky = NW)
 
-		# Texte :
-		self.Texte.grid(columnspan = 640, rowspan = 460, row = 210, column = 55, sticky = NW)
-		self.TexteLabel.grid(columnspan = 640, rowspan = 460, row = 56, column = 55, sticky = NW)
-
-		# widgets "Button" pour les Réponses :
+		# widgets "Bouton" pour les Réponses :
 		self.ButtonRep1.grid(columnspan = 640, rowspan = 460, row = 260, column = 0, sticky = NW)
 		self.ButtonRep2.grid(columnspan = 640, rowspan = 460, row = 326, column = 0, sticky = NW)
 		self.ButtonRep3.grid(columnspan = 640, rowspan = 460, row = 391, column = 0, sticky = NW)
@@ -183,10 +200,12 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		self.B_Jet3.grid(columnspan = 640, rowspan = 460, row = 391, column = 210, sticky = NW)
 		self.B_Menu.grid(columnspan = 640, rowspan = 460, row = 0, column = 75, sticky = NW)
 		self.B_Goto.grid(columnspan = 640, rowspan = 460, row = 0, column = 450, sticky = NW)
+
 		# CheckBox Réponses : 
 		self.checkRep1.grid(columnspan = 640, rowspan = 460, row = 260, column = 280, sticky = NW)
 		self.checkRep2.grid(columnspan = 640, rowspan = 460, row = 326, column = 280, sticky = NW)
 		self.checkRep3.grid(columnspan = 640, rowspan = 460, row = 391, column = 280, sticky = NW)
+
 		# Entry Réponses :
 		self.Rep1.grid(columnspan = 640, rowspan = 460, row = 287, column = 10, sticky = NW)
 		self.Rep2.grid(columnspan = 640, rowspan = 460, row = 353, column = 10, sticky = NW)
@@ -203,8 +222,10 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		self.E_XGoto.grid(columnspan = 640, rowspan = 460, row = 32, column = 442, sticky = NW)
 		self.E_YGoto.grid(columnspan = 640, rowspan = 460, row = 32, column = 472, sticky = NW)
 
-	def ClearEditeur(self):
-		print("I: Déchargement de l'interface d'éditions")
+
+
+	def ClearEditeur(self): # On supprime les widgets de l'éditeur de scène
+		print("I: Déchargement de l'interface d'éditions") # On indique qu'on décharge l'interface de l'éditeur de scène
 		self.TopHelp.grid_forget()
 		self.TopHelpTwo.grid_forget()
 		self.InfoPosVar.grid_forget()
@@ -241,36 +262,43 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		self.E_YGoto.grid_forget()
 		self.B_Goto.grid_forget()
 
-	def Return(self):
-		if (self.x != 0):
-			self.SetToBox()
-			self.x = int(self.debugArray[-1][0].x)
-			self.y = int(self.debugArray[-1][0].z)
-			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-			del self.debugArray[-1]
-			self.GetFromBox()
 
 
-	def ApplyCurrent(self, nbButton): # On ajoute à notre tableau box le chainage que l'on vient de créer
-		repTemporaire = [self.texteRep1.get(), self.texteRep2.get(), self.texteRep3.get()]
-		if(repTemporaire[nbButton] == ''):
-			print("I: La réponse est vide, veuillez en créer une pour pouvoir y accéder !")
-		else:
-			self.SetToBox()
-			temp = self.x
-			self.debugArray.append([Vecteur(self.x, self.y) ,str(Vecteur(self.x, self.y))])
-			self.x = self.chainageActuel.Reponses[nbButton].pos.x
-			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-			if (temp == self.chainageActuel.Reponses[nbButton].pos.x +1):
-				self.y = self.ZtoYrep(self.x - 1, self.chainageActuel.Reponses[nbButton].pos.z)
+	def Return(self): # Cette fonction sert à retourner au chainon ou l'utilisateur se trouvais précedement
+		if (self.x != 0): # Si on l'utilisateur se trouve en x = 0, on ne fait rien, sinon :
+			self.SetToBox() # On applique ce que l'utilisateur à modifié
+			self.x = int(self.debugArray[-1][0].x) # On se rend à la position x de la position où l'utilisateur se trouvais précedement
+			self.y = int(self.debugArray[-1][0].z) # On se rend à la position y de la position où l'utilisateur se trouvais précedement
+			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) # On indique à l'utilisateur la nouvelle position 
+			del self.debugArray[-1] # On supprime la où l'utilisateur se trouve de l'historique de la où il est allé
+			self.GetFromBox() # On Affiche à l'utilisateur le nouveau chainon
+
+
+
+	def ApplyCurrent(self, nbButton): # On applique à notre scène le chainage que l'on vient de créer et on se rend à la position à laquel la réponse tend
+		repTemporaire = [self.texteRep1.get(), self.texteRep2.get(), self.texteRep3.get()] # On créer un tableau contenant les réponses, y compris les réponses vides
+		if(repTemporaire[nbButton] == ''): # On vérfie que l'utilisateur ne clique pas sur une réponse non configuré
+			print("I: La réponse est vide, veuillez en créer une pour pouvoir y accéder !") # Si il à cliqué sur une réponse non configuré on lui indique
+		else: # Sinon :
+			self.SetToBox() # On applique les modifications faites à la boite
+			temp = self.x # On stoque temporairement l'emplacement x où l'on se trouve
+			self.debugArray.append([Vecteur(self.x, self.y) ,str(Vecteur(self.x, self.y))]) # On ajoute dans une liste la position x et y sous formes de vecteur
+			# Cette liste va être utiliser pour afficher là où on a était avec la fonction Debug() et pour revenir en arrière avec la fonction Return()
+			self.x = self.chainageActuel.Reponses[nbButton].pos.x # On définie notre x à la position où la réponse choisi amène
+			# Pour le y, on assigne le z de la réponse sur laquel on à cliqué en tant que y par le biais de la fonction ZtoYrep()
+			# Pour plus d'informations sur pourquoi on passe par la fonction ZtoYrep() voir dans le compte-rendu à Explication de l'éditeur de dialogue
+			if (temp == self.x +1): # Si notre x actuel est égal à l'ancien x + 1, on utilise les réponses de la colonne précedente
+				self.y = self.ZtoYrep(self.x - 1, self.chainageActuel.Reponses[nbButton].pos.z) # On assigne notre nouvelle y
 			elif (self.x == 0):
-				self.y = self.ZtoYrep(self.x, self.chainageActuel.Reponses[nbButton].pos.z)
-			else:
-				self.y = self.chainageActuel.Reponses[nbButton].pos.z
-			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-			self.GetFromBox()
+				self.y = self.ZtoYrep(self.x, self.chainageActuel.Reponses[nbButton].pos.z) # On assigne notre nouvelle y
+			else: # Si notre x précédent et notre x actuel ne se suivent pas et que notre x n'est pas égal à zéro alors on assigne normalement notre y :
+				self.y = self.chainageActuel.Reponses[nbButton].pos.z # On assigne notre nouvelle y
+			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) # On actualise l'affichage de la position de l'utilisateur
+			self.GetFromBox() # Une fois que notre x et notre y est actualisé, on cherche à obtenir (si il y'en à) les infos à notre nouvelles positions
 
-	def SetToBox(self): # On assignent les infos rentrés dans les Entrys à notre variables chainageActuel
+
+
+	def SetToBox(self): # On assignent les infos rentrés dans les Entrys à notre variables chainageActuel pour pouvoir 
 		listeTemporaire = []
 		listeExtend = []
 		listeFunction = []
@@ -364,6 +392,8 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		print("I: Application des modifications sur la boite en : " + str(self.x) + " " + str(self.y))
 		self.box[self.x][self.y] = self.chainageActuel
 
+
+
 	def GetFromBox(self, indexX = None, indexY = None): # On actualise les widgets sur un nouveau Chainage 
 		if (indexX == None):
 			indexX = self.x
@@ -447,10 +477,10 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 			self.ClearMenu()
 			self.LoadEditeur()
 			self.GetFromBox()
-			self.Debug()
 		except:
 			print("E: Le ficher n'existe pas !")
 		
+
 
 	def NewScene(self, nomDuFichier):
 		teste = Boite("teste")
@@ -465,13 +495,16 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		self.LoadEditeur()
 		self.GetFromBox()
 		print("I: Création du point d'origine [0][0]")
-		
+
+
+
 	def Save(self):
 		self.SetToBox()
 		self.box.Save()
 		self.GetFromBox()
 		print("I: Sauvegarde effectuée")
 		
+
 
 	def ZtoYchai(self, index, indiceToFind):
 		for i in range(0, len(self.box[index])):
@@ -480,18 +513,22 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 				return int(i)
 
 
+
 	def ZtoYrep(self, index, indiceToFind):
-		print(str(index) + " " + str(indiceToFind))
 		for i in range(0, len(self.box[index])):
 			for x in range(0, len(self.box[index][i].Reponses)):
 				if (self.box[index][i].Reponses[x].pos.z == indiceToFind):
 					return int(self.box[index][i].Reponses[x].pos.z)
 		print("E: Indice recherché non trouvé")
 
+
+
 	def YtoZ(self, indexY, indexX = None):
 		if (indexX == None):
 			indexX = self.x
 		return self.box[indexX][indexY].indice
+
+
 
 	def Debug(self):
 		print("\n_\n")
@@ -520,9 +557,10 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 								print("        " + str(self.box[z][i].Reponses[x].pos) + " " + str(self.box[z][i].Reponses[x].hiden))
 							
 			except:
-				print("Hum Erreur !")
-				
+				raise
+				print("Hum erreur !")
 		print("\n_\n")
+
 
 
 	def Delete(self):
@@ -546,6 +584,8 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 			self.box.Supprimer(boxToDel[0], boxToDel[1])
 			self.GetFromBox()
 		
+
+
 	def DeleteAllWays(self):
 		xActu = self.x
 		yActu = self.y
@@ -580,6 +620,8 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		# Maintenant on supprime tout :
 		for i in range(1, len(listeChainesupp)+1):
 			self.box.Supprimer(int(listeChainesupp[-i].x), int(listeChainesupp[-i].z))
+
+
 
 	def Count(self, obj):
 		count = 0
@@ -671,6 +713,8 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 
 			menu_jet.mainloop()
 
+
+
 	def Mike(self):
 		def Valider():
 			self.box[self.x][self.y].mikeTexte = mikeTexte.get()
@@ -702,14 +746,18 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 
 		menu_mike.mainloop()
 
-	def Menu(self):
-		self.Save()
-		self.ClearEditeur()
+
+
+	def Menu(self): # Cette fonction sert à retourner au menu
+		self.Save() # On sauvegarde ce que le joueur à fait
+		self.ClearEditeur() # On décharge l'éditeur pour pouvoir charger le menu apres
 		self.debugArray = []
 		self.x = 0
 		self.y = 0
 		print("\n\n\n\n\n\n\n\n\n\n")
 		self.LoadMenu()
+
+
 
 	def LenBoxRep(self):
 		taille = 0
@@ -720,21 +768,21 @@ class Interface: # On définit notre classe, que l'on appelle "Interface" :
 		return taille
 
 
-	def GoTo(self):
-		if (self.XGoTo.get() != '' and self.YGoTo.get() != ''):
-			newX = int(self.XGoTo.get())
+
+	def GoTo(self): # Cette fonction est utilisé lorsque que l'utilisateur va appuyer sur le bouton Go, elle sert à se rendre n'importe où dans la scène
+		if (self.XGoTo.get() != '' and self.YGoTo.get() != ''): # Si l'utilisateur n'a pas rentré de coordonnées on ne fait rien sinon :
+			newX = int(self.XGoTo.get()) # On stoque nos deux nouvelles coordonnées dans 2 variables temporaires :
 			newY = int(self.YGoTo.get())
-			try:
-				
+			try: # On essaye d'obetnir ce qui se trouve à la nouvelle position :
 				temp = self.box[newX][newY]
-			except:
+			except: # Si cette position n'existe pas on le dit :
 				print("E: L'index n'existe pas !")
-			else:
-				self.SetToBox()
-				self.debugArray.append([Vecteur(self.x, self.y) ,str(Vecteur(self.x, self.y))])
-				self.x = newX
+			else: # Sinon, cette position existe alors on s'y rend :
+				self.SetToBox() # On applique les modifications que l'utilisateur à fait sur la chainon ou il se trouve
+				self.debugArray.append([Vecteur(self.x, self.y) ,str(Vecteur(self.x, self.y))]) # On ajoute là où l'utilisateur se trouve actuelement dans l'historique 
+				self.x = newX # On applique les nouvelles coordonéees
 				self.y = newY
-				self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-				self.GetFromBox()
-			self.XGoTo.set('')
+				self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) # On affiche le changement de coordonnées à l'utilisateur
+				self.GetFromBox() # On obtient les informations la nouvelles boites où l'on se trouve désormais
+			self.XGoTo.set('') # On vide les cases où le joueur à rentré les coordonnées
 			self.YGoTo.set('')
