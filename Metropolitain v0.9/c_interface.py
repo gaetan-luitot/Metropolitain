@@ -298,41 +298,43 @@ class Interface:
 
 
 
-	def SetToBox(self): # On assignent les infos rentrés dans les Entrys à notre variables chainageActuel pour pouvoir 
-		listeTemporaire = []
-		listeExtend = []
-		listeFunction = []
+	def SetToBox(self): # On assignent les infos rentrés dans les Entrys par l'utilisateur à notre boite
+		# On créer trois listes qui vont contenir :
+		listeTemporaire = [] # Les 0, 1, 2 ou 3 objets Reponse à appliquer à la boite (voir c_reponse.py)
+		listeExtend = [] # Les 0, 1, 2 ou 3 objets Extension, si il y a des réponses qui ont des jets (voir c_reponse.py)
+		listeFunction = [] # Les 0, 1, 2 ou 3 variables str si les réponses appliques des fonctions
 
-		# Configuration de listeExtend :
-		try:
-			listeExtend.append(self.chainageActuel.Reponses[0].extend)
-		except:
-			listeExtend.append(False)
-		try:
+		# Configuration de listeExtend, de la liste si les réponses possèdent des jets :
+		try: # On essaye d'ajouter à notre liste l'objet Extension de la réponse 1
+			listeExtend.append(self.chainageActuel.Reponses[0].extend) # Si il existe alors cela fonctionne
+		except: # Sinon, si il n'existe pas : 
+			listeExtend.append(False) # on ajoute False à notre liste, pour indiquer que cette fonction n'a pas de jet
+		try: # La même chose mais pour la réponse 2 :
 			listeExtend.append(self.chainageActuel.Reponses[1].extend)
 		except:
 			listeExtend.append(False)
-		try:
+		try: # La même chose mais pour la réponse 3 :
 			listeExtend.append(self.chainageActuel.Reponses[2].extend)
 		except:
 			listeExtend.append(False)
+		# Donc si une réponse nécessite un jet, sont attribut extend sera configuré en tant qu'objet Extend, sinon il sera égal à False
 
 		# Configuration de listeFunction :
-		try:
-			if (self.FunctionRep1.get() != ''):
-				listeFunction.append(self.FunctionRep1.get())
-			else :
+		try: # On essaye d'ajouter à notre liste le str de la fonction de la réponse 1
+			if (self.FunctionRep1.get() != ''): # Et qu'il n'est pas nul :
+				listeFunction.append(self.FunctionRep1.get()) # Si il existe et qu'il n'est pas nul alors cela fonctionne
+			else : # Si il est nul alors on ajoute False
 				listeFunction.append(False)
-		except:
+		except: # Ou si il n'existe pas, on ajoute False
 			listeFunction.append(False)
-		try:
+		try: # La même chose pour la réponse 2 :
 			if (self.FunctionRep2.get() != ''):
 				listeFunction.append(self.FunctionRep2.get())
 			else :
 				listeFunction.append(False)
 		except:
 			listeFunction.append(False)
-		try:
+		try: # Et on fait la même chose pour la réponse 3 :
 			if (self.FunctionRep3.get() != ''):
 				listeFunction.append(self.FunctionRep3.get())
 			else :
@@ -340,23 +342,24 @@ class Interface:
 		except:
 			listeFunction.append(False)
 
-
-		if self.texteRep1.get() != '':
-			try:
-				if (self.chainageActuel.Reponses[0].pos.z != None): # On regarde si notre réponse est déjà configuré :
-					if (self.xRep1.get() != '' and self.yRep1.get() != ''): # Si on veut utiliser une boite plusieurs fois
+		# Maitenant on va configurer notre listeTemporaire, qui va contenir les réponses configurés à appliquer à la boite
+		if self.texteRep1.get() != '': # Si le texte de la réponse 1 n'est pas nul, alors :
+			try: # On essaye de voir si la réponse 1 existe déjà ou si c'est la première fois qu'on applique les modifications 
+				if (self.chainageActuel.Reponses[0].pos.z != None): # Si c'est la première fois alors "Reponses[0].pos.z" n'existe pas et cela provoque une erreur
+					# Donc si des informations existes déjà pour la réponse 1 et que l'utilisateur à changer les positions, on ajoute toutes les infos sur la réponse 1 à notre liste :
+					if (self.xRep1.get() != '' and self.yRep1.get() != ''): 
 						listeTemporaire.append(Reponse(self.texteRep1.get(), int(self.xRep1.get()), int(self.yRep1.get()), bool(self.hiden1.get()), listeExtend[0], listeFunction[0]))
-					else:
+					else: # Sinon si les positions sont vides (que l'utilisateur les a éffacés), on applique celles qui étaientt configurés avant :
 						listeTemporaire.append(Reponse(self.texteRep1.get(), self.chainageActuel.Reponses[0].pos.x, self.chainageActuel.Reponses[0].pos.z, bool(self.hiden1.get()), listeExtend[0], listeFunction[0]))
-			except:
-				if (self.xRep1.get() != '' and self.yRep1.get() != ''):
+			except: # Si par contre, c'est la première fois qu'on applique la réponse 1 à la boite :
+				if (self.xRep1.get() != '' and self.yRep1.get() != ''): # Et que l'utilisateur à rentré des coordonnées déjà existante, on ajoute les infos de la réponse 1 qui mène à un chainage déjà existant :
 					listeTemporaire.append(Reponse(self.texteRep1.get(), int(self.xRep1.get()),  int(self.yRep1.get()), bool(self.hiden1.get()), listeExtend[0], listeFunction[0]))
-				else:
+				else: # Si par contre il ne rentre pas de coordonnées, alors on ajoute notre réponse 1 et on créer un nouveau chainage pour lui :
 					listeTemporaire.append(Reponse(self.texteRep1.get(), (self.x +1), self.box.GetIndice(self.x + 1), bool(self.hiden1.get()), listeExtend[0], listeFunction[0]))
 					self.box.Ajouter(Chainage(Chainage.d_texte, Chainage.d_Reponses, self.box.GetIndice(self.x +1), Vecteur(self.x, self.y)), self.x + 1)
 
 
-		if self.texteRep2.get() != '':
+		if self.texteRep2.get() != '': # On fait la même chose pour la réponse 2 :
 			try:
 				if (self.chainageActuel.Reponses[1].pos.z != None): # On regarde si notre réponse est déjà configuré :
 					if (self.xRep2.get() != '' and self.yRep2.get() != ''): # Si on veut utiliser une boite plusieurs fois
@@ -372,7 +375,7 @@ class Interface:
 
 
 
-		if self.texteRep3.get() != '':
+		if self.texteRep3.get() != '': # Et la même chose pour la réponse 3
 			try:
 				if (self.chainageActuel.Reponses[2].pos.z != None): # On regarde si notre réponse est déjà configuré :
 					if (self.xRep3.get() != '' and self.yRep3.get() != ''): # Si on veut utiliser une boite plusieurs fois
@@ -387,10 +390,10 @@ class Interface:
 					self.box.Ajouter(Chainage(Chainage.d_texte, Chainage.d_Reponses, self.box.GetIndice(self.x +1), Vecteur(self.x, self.y)), self.x + 1)
 
 
-		self.chainageActuel.texte = self.texteDialogue.get()
-		self.chainageActuel.Reponses = listeTemporaire
-		print("I: Application des modifications sur la boite en : " + str(self.x) + " " + str(self.y))
-		self.box[self.x][self.y] = self.chainageActuel
+		self.chainageActuel.texte = self.texteDialogue.get() # On applique les modifications que l'utilisateur à fait sur le texte principale
+		self.chainageActuel.Reponses = listeTemporaire # Et on applique les réponses contenue dans notre liste "listeTemporaire" au chainage que l'on vient de modifier
+		print("I: Application des modifications sur la boite en : " + str(self.x) + " " + str(self.y)) # On indique à l'utilisateur qu'on à appliquer ses modifications à la scène
+		self.box[self.x][self.y] = self.chainageActuel # Puis on applique le chainage modifié à notre scène
 
 
 
@@ -400,7 +403,7 @@ class Interface:
 		if (indexY == None):
 			indexY = self.y
 
-		self.nbBox.set('Nombres de Boites : ' + str(self.box.Len())) # On actualise les aides
+		self.nbBox.set('Nombres de Boites : ' + str(self.box.Len())) # On actualise les aides pour l'utilisateur
 		self.nbBoxRep.set('Boites configurés : ' + str(self.LenBoxRep()))
 		
 
@@ -424,7 +427,7 @@ class Interface:
 					self.checkRep1.select() # On coche la case
 				else: # Sinon :
 					self.checkRep1.deselect() # On la décoche
-			else: # Si il y a pas de réponse 1 alors on met tout nos widgets vierge :
+			else: # Si il y a pas de réponse 1 alors on met tout nos widgets, de la réponse 1, vierge :
 				self.texteRep1.set('')
 				self.xRep1.set('')
 				self.yRep1.set('')
@@ -443,7 +446,7 @@ class Interface:
 					self.checkRep2.select() #  On coche la case
 				else: # Sinon :
 					self.checkRep2.deselect() # On la décoche
-			else:  # Si il y a pas de réponse 2 alors on met tout nos widgets vierge :
+			else:  # Si il y a pas de réponse 2 alors on met tout nos widgets, de la réponse 2, vierge :
 				self.texteRep2.set('')
 				self.xRep2.set('')
 				self.yRep2.set('')
@@ -451,18 +454,18 @@ class Interface:
 				self.checkRep2.deselect()
 
 			if len(self.chainageActuel.Reponses) > 2: # On charge toute les infos pour la réponse trois (si il y'en a une)
-				self.texteRep3.set(self.chainageActuel.Reponses[2].texte) # Le texte de la réponse 2
-				self.xRep3.set(self.chainageActuel.Reponses[2].pos.x) # La position du chainage où mène la réponse 2
+				self.texteRep3.set(self.chainageActuel.Reponses[2].texte) # Le texte de la réponse 3
+				self.xRep3.set(self.chainageActuel.Reponses[2].pos.x) # La position du chainage où mène la réponse 3
 				self.yRep3.set(self.chainageActuel.Reponses[2].pos.z)
-				if (self.box[indexX][indexY].Reponses[2].function != False):
-					self.FunctionRep3.set(str(self.box[indexX][indexY].Reponses[2].function))
-				else:
-					self.FunctionRep3.set('')
-				if (self.box[indexX][indexY].Reponses[2].hiden == True):
-					self.checkRep3.select()
-				else:
-					self.checkRep3.deselect()
-			else:
+				if (self.box[indexX][indexY].Reponses[2].function != False): # Si la réponse 3 possède une fonction :
+					self.FunctionRep3.set(str(self.box[indexX][indexY].Reponses[2].function))  # On la charge
+				else: # Sinon, si la réponse 3 ne possède pas de fonction :
+					self.FunctionRep3.set('')  # On met notre widget vierge
+				if (self.box[indexX][indexY].Reponses[2].hiden == True): # Si la réponse 3 est caché alors 
+					self.checkRep3.select() # On coche la case
+				else: # Sinon :
+					self.checkRep3.deselect() # On la décoche
+			else: # Si il y a pas de réponse 3 alors on met tout nos widgets de la réponse 3 vierge :
 				self.texteRep3.set('')
 				self.xRep3.set('')
 				self.yRep3.set('')
