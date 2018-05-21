@@ -67,7 +67,7 @@ class Fenetre(tkinter.Frame): #fenetre de jeu principal
         tkinter.Frame._init_(elf, master)
      centrefenetre (fen)
      fen.resizable(width=False, height=False)
-     fen.title("Jeu Isn")
+     fen.title("Metropolitain : 2078")
      fen['bg']='black'
 
 def TM():

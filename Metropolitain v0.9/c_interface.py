@@ -394,64 +394,65 @@ class Interface:
 
 
 
-	def GetFromBox(self, indexX = None, indexY = None): # On actualise les widgets sur un nouveau Chainage 
-		if (indexX == None):
+	def GetFromBox(self, indexX = None, indexY = None): # On prend les informations stoqué dans la boite pour les montrer à l'utilisateur
+		if (indexX == None): # Si l'utilisateur ne rentre pas de coordonnées alors on prend celle où il se trouve
 			indexX = self.x
 		if (indexY == None):
 			indexY = self.y
 
-		self.nbBox.set('Nombres de Boites : ' + str(self.box.Len()))
+		self.nbBox.set('Nombres de Boites : ' + str(self.box.Len())) # On actualise les aides
 		self.nbBoxRep.set('Boites configurés : ' + str(self.LenBoxRep()))
 		
 
-		try: # On essaye d'obtenir l'index :
+		try: # On essaye d'obtenir le chainage à afficher :
 			self.chainageActuel = self.box[indexX][indexY]
-		except: # Si il n'existe pas on le créer:
+		except: # Si il n'existe pas on le créer, il sera vierge:
 			self.box.Ajouter(Chainage(Chainage.d_texte, Chainage.d_Reponses, self.box.GetIndice(indexX), Vecteur(self.x, self.y)), indexX)
 			self.chainageActuel = self.box[indexX][indexY]
-		finally: # Puis dans tout les cas on actualise les widgets :
-			self.texteDialogue.set(self.chainageActuel.texte)
-			if len(self.chainageActuel.Reponses) > 0:
-				self.texteRep1.set(self.chainageActuel.Reponses[0].texte)
-				self.xRep1.set(self.chainageActuel.Reponses[0].pos.x)
+		finally: # Puis dans tout les cas on actualise les widgets, donc il sera soit vierge soit déjà configuré :
+			self.texteDialogue.set(self.chainageActuel.texte) # On charge le texte de la description principale
+			
+			if len(self.chainageActuel.Reponses) > 0: # On charge toute les infos pour la réponse une (si il y'en a une)
+				self.texteRep1.set(self.chainageActuel.Reponses[0].texte) # Le texte de la réponse 1
+				self.xRep1.set(self.chainageActuel.Reponses[0].pos.x) # La position du chainage où mène la réponse 1
 				self.yRep1.set(self.chainageActuel.Reponses[0].pos.z)
-				if (self.box[indexX][indexY].Reponses[0].function != False):
-					self.FunctionRep1.set(str(self.box[indexX][indexY].Reponses[0].function))
-				else:
-					self.FunctionRep1.set('')
-				if (self.box[indexX][indexY].Reponses[0].hiden == True):
-					self.checkRep1.select()
-				else:
-					self.checkRep1.deselect()
-			else:
+				if (self.box[indexX][indexY].Reponses[0].function != False): # Si la réponse possède une fonction :
+					self.FunctionRep1.set(str(self.box[indexX][indexY].Reponses[0].function)) # On la charge
+				else: # Sinon, si la réponse 1 ne possède pas de fonction :
+					self.FunctionRep1.set('') # On met notre widget vierge
+				if (self.box[indexX][indexY].Reponses[0].hiden == True): # Si la réponse 1 est caché alors :  
+					self.checkRep1.select() # On coche la case
+				else: # Sinon :
+					self.checkRep1.deselect() # On la décoche
+			else: # Si il y a pas de réponse 1 alors on met tout nos widgets vierge :
 				self.texteRep1.set('')
 				self.xRep1.set('')
 				self.yRep1.set('')
 				self.FunctionRep1.set('')
 				self.checkRep1.deselect()
 
-			if len(self.chainageActuel.Reponses) > 1:
-				self.texteRep2.set(self.chainageActuel.Reponses[1].texte)
-				self.xRep2.set(self.chainageActuel.Reponses[1].pos.x)
+			if len(self.chainageActuel.Reponses) > 1: # On charge toute les infos pour la réponse deux (si il y'en a une)
+				self.texteRep2.set(self.chainageActuel.Reponses[1].texte) # Le texte de la réponse 2
+				self.xRep2.set(self.chainageActuel.Reponses[1].pos.x) # La position du chainage où mène la réponse 2
 				self.yRep2.set(self.chainageActuel.Reponses[1].pos.z)
-				if (self.box[indexX][indexY].Reponses[1].function != False):
-					self.FunctionRep2.set(str(self.box[indexX][indexY].Reponses[1].function))
-				else:
-					self.FunctionRep2.set('')
-				if (self.box[indexX][indexY].Reponses[1].hiden == True):
-					self.checkRep2.select()
-				else:
-					self.checkRep2.deselect()
-			else:
+				if (self.box[indexX][indexY].Reponses[1].function != False): # Si la réponse 2 possède une fonction :
+					self.FunctionRep2.set(str(self.box[indexX][indexY].Reponses[1].function)) # On la charge
+				else: # Sinon, si la réponse 2 ne possède pas de fonction :
+					self.FunctionRep2.set('') # On met notre widget vierge
+				if (self.box[indexX][indexY].Reponses[1].hiden == True): # Si la réponse 2 est caché alors :  
+					self.checkRep2.select() #  On coche la case
+				else: # Sinon :
+					self.checkRep2.deselect() # On la décoche
+			else:  # Si il y a pas de réponse 2 alors on met tout nos widgets vierge :
 				self.texteRep2.set('')
 				self.xRep2.set('')
 				self.yRep2.set('')
 				self.FunctionRep2.set('')
 				self.checkRep2.deselect()
 
-			if len(self.chainageActuel.Reponses) > 2:
-				self.texteRep3.set(self.chainageActuel.Reponses[2].texte)
-				self.xRep3.set(self.chainageActuel.Reponses[2].pos.x)
+			if len(self.chainageActuel.Reponses) > 2: # On charge toute les infos pour la réponse trois (si il y'en a une)
+				self.texteRep3.set(self.chainageActuel.Reponses[2].texte) # Le texte de la réponse 2
+				self.xRep3.set(self.chainageActuel.Reponses[2].pos.x) # La position du chainage où mène la réponse 2
 				self.yRep3.set(self.chainageActuel.Reponses[2].pos.z)
 				if (self.box[indexX][indexY].Reponses[2].function != False):
 					self.FunctionRep3.set(str(self.box[indexX][indexY].Reponses[2].function))
@@ -470,239 +471,221 @@ class Interface:
 
 
 		
-	def LoadScene(self, nomDuFichier):
-		try:
-			self.box.Load(nomDuFichier)
+	def LoadScene(self, nomDuFichier): # Cette fonction est appellé lors du menu, lorsque l'utilisateur appuie sur le bouton "Load"
+		try: # On essaye de charger le fichier
+			self.box.Load(nomDuFichier) # On charge le fichier
 			print("I: Chargement du fichier " + nomDuFichier + ".save")
-			self.ClearMenu()
-			self.LoadEditeur()
-			self.GetFromBox()
-		except:
+			self.ClearMenu() # Si le chargement du fichier à marché alors on désaffiche le menu
+			self.LoadEditeur() # Puis on charge l'interface de l'éditeur de scène
+			self.GetFromBox() # Et on actualise nos widgets pour pouvoir lire/modifier ce qu'il y avait dans le fichier
+		except: # Si on y arrive pas, alors on indique à l'utilisateur que le fichier n'existe pas
 			print("E: Le ficher n'existe pas !")
 		
 
 
-	def NewScene(self, nomDuFichier):
-		teste = Boite("teste")
-		try:
+	def NewScene(self, nomDuFichier): # Cette fonction est appellé lors du menu, lorsque l'utilisateur appuie sur le bouton "Créer"
+		# Elle sert à créer une nouvelle scène, où à en écraser une si il existe une du même nom
+		teste = Boite("teste") # On créer une boite vide 
+		try: # Puis on essaye de voir si un fichier portant le même nom existe
+			# Car si il existe alors on indique à l'utilisateur, que si il sauvegarde cela supprimera le fichier qui existe.
 			teste.Load(nomDuFichier)
 			showwarning('Warning', 'Attention un fichier porte déjà ce nom, si vous sauvegarder ce nouveau fichier cela supprimera le premier !')
 			print("I: Création du fichier " + nomDuFichier)
-		except:
+		except: # Sinon si aucun fichier portant le même nom existe alors on créer le fichier normalement :
 			print("I: Création du fichier " + nomDuFichier)
-		self.box.New(nomDuFichier)
-		self.ClearMenu()
-		self.LoadEditeur()
-		self.GetFromBox()
+		# Quoi qu'il arrive, on créer un nouveau fichier, si il ne veut pas supprimer son premier fichier, il a juste à quitter la fenêtre
+		self.box.New(nomDuFichier) # On créer une nouvelle boite
+		self.ClearMenu() # On désaffiche le menu
+		self.LoadEditeur() # Pour pouvoir afficher l'éditeur de scène
 		print("I: Création du point d'origine [0][0]")
 
 
 
-	def Save(self):
-		self.SetToBox()
-		self.box.Save()
-		self.GetFromBox()
+	def Save(self): # Cette fonction est appellée lorsque l'utilisateur appuie sur le bouton "Save", elle sert à sauvegarder sa progression
+		self.SetToBox() # D'abord on applique les modifications que l'utilisateur à fait à notre boite
+		self.box.Save() # Puis on sauvegarde
 		print("I: Sauvegarde effectuée")
 		
 
 
-	def ZtoYchai(self, index, indiceToFind):
-		for i in range(0, len(self.box[index])):
-			if(self.box[index][i].indice == indiceToFind):
-				print("return -> " + str(x))
-				return int(i)
+	def ZtoYchai(self, index, indiceToFind): # Cette fonction sert à renvoyer le "y" d'un chainage d'une colonne en fonction de son indice
+		for i in range(0, len(self.box[index])): # Donc pour chaque chainage de la colonne :
+			if(self.box[index][i].indice == indiceToFind): # On test si l'indice du chainage et celui qu'on cherche correspondent 
+				return int(i) # Si ils correspondent alors on renvoie sa position y dans la colonne
 
 
 
-	def ZtoYrep(self, index, indiceToFind):
-		for i in range(0, len(self.box[index])):
-			for x in range(0, len(self.box[index][i].Reponses)):
-				if (self.box[index][i].Reponses[x].pos.z == indiceToFind):
-					return int(self.box[index][i].Reponses[x].pos.z)
-		print("E: Indice recherché non trouvé")
+	def ZtoYrep(self, index, indiceToFind): # Cette fonction sert à renvoyer le "y" d'une réponse d'une colonne en fonction de son indice
+		for i in range(0, len(self.box[index])): # Donc pour chaque chainage de notre de la colonne n° "index" :
+			for x in range(0, len(self.box[index][i].Reponses)): # Et pour chaque réponse de chaque chainage :
+				if (self.box[index][i].Reponses[x].pos.z == indiceToFind): # On teste si l'indice de la réponse et l'indice qu'on cherche correspondent
+					return int(self.box[index][i].Reponses[x].pos.z) # Si ils correspondent alors on renvoie sa position "y" dans le tableau
+		print("E: Indice recherché non trouvé") # Si on à pas trouvé on le dit à l'utilisateur
 
 
 
-	def YtoZ(self, indexY, indexX = None):
-		if (indexX == None):
+	def YtoZ(self, indexY, indexX = None): # Cette fonction sert à donner l'indice d'un chainage en fonction de sa position "y"
+		if (indexX == None): # Si l'utilisateur ne donne pas de "x", alors on prend le "x" de là où il se trouve actuelemet
 			indexX = self.x
-		return self.box[indexX][indexY].indice
+		return self.box[indexX][indexY].indice # Puis on retourne l'indice du chainage
 
 
 
-	def Debug(self):
-		print("\n_\n")
-		for z in range(0,self.box.Lenx()):
-			
-			print("----------### "+ str(z)+" ###----------")
-			try:
-				for i in range (0, len(self.box[z])):
-					if (z == self.x and i == self.y):
+	# Cette fonction est appellée lorsque l'utilisateur appuie sur le bouton "Debug", 
+	# elle sert à afficher la boite dans son ensemble pour donner une visibilité à l'utilisateur,
+	# Deplus, elle va afficher en orange, là où l'utilisateur est allé, et en rouge la ou l'utilisateur se trouve, et en bleu le reste :
+	def Debug(self): 
+		print("\n-_-_-_-_-_ D-E-B-U-G _-_-_-_-_-\n") # On saute deux lignes pour faire de la place dans la console
+		# On va donc parcourir chaque réponses, de chaque chainage, de chaque colonne du tableau et les afficher :
+		for z in range(0,self.box.Lenx()): # Donc pour chaque colonne du tableau :
+			print("----------### "+ str(z)+" ###----------") # On affiche le numéro de la colonne
+
+			try: # On met nos boucle suivantes dans un "try", au cas ou il y'est une erreur :
+				for i in range (0, len(self.box[z])): # Pour chaque élement dans une colonne
+					# Si notre 'i' et notre 'j' correspondent avec 'x' et 'y' alors cela veut dire que c'est là où le joueur se trouve actuelement
+					if (z == self.x and i == self.y): # Donc affiche ce chainage en rouge :
 						self.color.write("|-| -> " + str(self.box[z][i].indice) + "\n","COMMENT")
-					elif(self.Count(str(Vecteur(z, i))) == 1):
-						self.color.write("|-| -> " + str(self.box[z][i].indice) + "\n","KEYWORD")
-					else:
-						print("|-| -> " + str(self.box[z][i].indice))
+					elif(self.Count(str(Vecteur(z, i))) == 1): # Si par contre c'est un chainage où l'utilisateur est allé précedement :
+						self.color.write("|-| -> " + str(self.box[z][i].indice) + "\n","KEYWORD") # On affiche le chainage en orange
+					else: # Sinon c'est un chainage normal :
+						print("|-| -> " + str(self.box[z][i].indice)) # on l'affiche de la couleur de base de la console
 
-					for x in range(0, len(self.box[z][i].Reponses)):
+					# Maintenant qu'on affiché la colonne et le chainage, on va afficher les réponses qui se trouve dans le chainages
+					for x in range(0, len(self.box[z][i].Reponses)): # Donc pour chaque réponses qui se trouve dans le chainage :
+						# Si le joueur est passé par là alors on va afficher cette réponsé en orange :
 						if (str(self.box[z][i].Reponses[x].pos) == str(Vecteur(self.x, self.y)) or self.Count(str(self.box[z][i].Reponses[x].pos)) == 1):
-							if (type(self.box[z][i].Reponses[x].extend) == type(Extension(None, None, None, None))):
+							if (type(self.box[z][i].Reponses[x].extend) == type(Extension(None, None, None, None))): # Et si cette réponse où est allé à deux issues :
+								# On affiche les deux positions où cette réponse amène et si elle est caché de base au joueur ou non :
 								self.color.write("        " + str(self.box[z][i].Reponses[x].pos) + " | " + str(self.box[z][i].Reponses[x].extend.pos2) + " " + str(self.box[z][i].Reponses[x].hiden) + "\n","KEYWORD")
-							else:
+							else: # Par contre si cette réponse ne nécessite pas de jet et donc à une seule issue :
 								self.color.write("        " + str(self.box[z][i].Reponses[x].pos) + " " + str(self.box[z][i].Reponses[x].hiden) + "\n","KEYWORD")
-						else:
+						else: # Sinon, si le joueur n'est pas passé par cette réponse, donc qu'elle ne se trouve pas dans l'historique :
+							# Et si elle à deux issues, on affiche les deux issues de couleur normale :
 							if (type(self.box[z][i].Reponses[x].extend) == type(Extension(None, None, None, None))):
 								print("        " + str(self.box[z][i].Reponses[x].pos) + " | " + str(self.box[z][i].Reponses[x].extend.pos2) + " " + str(self.box[z][i].Reponses[x].hiden))
-							else:
+							else: # Sinon la réponse à qu'une seule issue alors :
 								print("        " + str(self.box[z][i].Reponses[x].pos) + " " + str(self.box[z][i].Reponses[x].hiden))
 							
-			except:
-				raise
-				print("Hum erreur !")
-		print("\n_\n")
+			except: # En temps normal il n'est pas sensé avoir d'erreur, mais on ne sait jamais, 
+				# donc si quelque chose se passe mal au dessus, au lieu que l'erreur s'affiche il y'aura écrit "E: Hum Erreur !"
+				print("E: Hum erreur !")  
+		# Mais quoi qu'il arrive on fait de la place et on indique que c'est la fin de l'affichage de la boite
+		print("\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n") 
 
 
 
-	def Delete(self):
-		if self.x != 0:
-			if (len(self.box[self.x][self.y].Reponses) != 0):
-				self.DeleteAllWays() # On supprime les sous chemins
-			repToDel = 0
-			variableTemporaire = self.chainageActuel.indice
-			boxToDel = [self.x, self.y]
-	
-			self.x = self.box[boxToDel[0]][boxToDel[1]].pos.x
+	def Delete(self): # Cette fonction est apellé lorsque l'utilisateur clique sur le bouton "Delete"
+		# Elle sert à supprimer le chainage où le joueur se trouve
+
+		if self.x != 0: # Si le joueur se trouve en x = 0, la fonction ne fais rien car il faut au moins une position 0, 0.
+			repToDel = 0 # Cette variable va contenir le chiffre, représentant la réponse de la colonne précédente qui mène à ce chainage que l'on veut supprimer
+			variableTemporaire = self.chainageActuel.indice # On stoque temporairement l'indice du chainage qu l'on veut supprimer
+			boxToDel = [self.x, self.y] # Et on stoque dans une liste nos positions x et y
+			print("I: Suppression du chainage en x : " + str(self.x) + " et y : " + str(self.y))
+
+			self.x = self.box[boxToDel[0]][boxToDel[1]].pos.x # On assigne notre x et notre y aux x et y de la colonne précédente
 			self.y = self.box[boxToDel[0]][boxToDel[1]].pos.z
-			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y))
-			del self.debugArray[-1]
-	  	
-			for i in range(0, len(self.box[self.x][self.y].Reponses)):
-				if(self.box[self.x][self.y].Reponses[i].pos.z == variableTemporaire):
-					repToDel = i
 			
-			del self.box[self.x][self.y].Reponses[repToDel]
-			self.box.Supprimer(boxToDel[0], boxToDel[1])
-			self.GetFromBox()
-		
-
-
-	def DeleteAllWays(self):
-		xActu = self.x
-		yActu = self.y
-		listeChainesupp = []
-		liste2D = [[self.box[xActu][yActu].indice]]
-		rangeX = 0
-		last = None
-		while True:
-			for j in range(0, len(liste2D[rangeX])):
-				try:
-					yActu = last.Reponses[j].pos.z
-				except:
-					yActu = self.y
-				for i in range(0, len(self.box[xActu][yActu].Reponses)):
-					listeChainesupp.append(self.box[xActu][yActu].Reponses[i].pos)
-					try:
-						liste2D[rangeX +1].append(self.box[xActu][yActu].Reponses[i].pos)
-					except:
-						liste2D.append([self.box[xActu][yActu].Reponses[i].pos])
-
-
-			try:
-				if len(liste2D[rangeX +1]) == 0:
-					break
-			except:
-				break
-			else:
-				last = self.box[xActu][yActu]
-				rangeX += 1
-				xActu += 1
-
-		# Maintenant on supprime tout :
-		for i in range(1, len(listeChainesupp)+1):
-			self.box.Supprimer(int(listeChainesupp[-i].x), int(listeChainesupp[-i].z))
+			del self.debugArray[-1] # On supprime là ou il était dans l'historique des déplacements
+	
+			self.pos.set("x : " + str(self.x) + "\ny : " + str(self.y)) # On actualise la position 
+	  	
+	  		# Et là on cherche qu'elle est la réponse qui mène au chainage qu'on l'on veut supprimer, car on veut aussi supprimer la réponse qui y mène
+			for i in range(0, len(self.box[self.x][self.y].Reponses)): # Donc pour chaque réponse :
+				if(self.box[self.x][self.y].Reponses[i].pos.z == variableTemporaire): # On test si les indices des réponses correspondent avec l'indice de la boite qu'on veut supprimer
+					repToDel = i # Une fois qu'on là trouver on défini notre variable qui représente la réponse à supprimer
+			
+			del self.box[self.x][self.y].Reponses[repToDel] # On supprime la réponse qui mène au chainage que l'on veut supprimer
+			self.box.Supprimer(boxToDel[0], boxToDel[1]) # Puis une fois tout cela fait on supprime le chainage que l'on veut supprimer
+			self.GetFromBox() # Et on charge les informations de la nouvelle position où l'on se trouve
 
 
 
-	def Count(self, obj):
+	def Count(self, obj): # Cette fonction sert à compter combien de fois il y'a une position "obj" dans la liste des positions où l'utilisateur est allé
 		count = 0
-		for i in range(0, len(self.debugArray)):
-			count += self.debugArray[i][1].count(obj)
+		for i in range(0, len(self.debugArray)): # Donc pour chaque valeur dans la liste
+			count += self.debugArray[i][1].count(obj) # On teste si elles correspondent, si elles correspondent on ajouter 1 à count
 		return count
 
 		
 
-	def Jet(self, bouton):
-		listeTest = [self.Rep1.get(), self.Rep2.get(), self.Rep3.get()]
+	def Jet(self, bouton): # Cette fonction est appellé lorsque l'utilisateur appuie sur le bouton "Jet"
+		# Celle-ci va ouvrir une nouvelle fenêtre avec l'interface pour configurer le jet.
+		listeTest = [self.Rep1.get(), self.Rep2.get(), self.Rep3.get()] # On créer une liste temporaire contenant les réponses de chaques boutons
 		
-		if (listeTest[bouton] != ''):
-			self.SetToBox()
+		if (listeTest[bouton] != ''): # Si l'utilisateur à cliqué sur le bouton "Jet" d'une réponse vide, on ne fait rien, sinon :
+			self.SetToBox() # On applique ce qu'il à fait à la boite
 
-			def Valider(bouton):
-				variableFunc = function2.get()
+			def Valider(bouton): # On créer une fonction pour notre bouton "valider"
+				variableFunc = function2.get() # On stoque temporairement dans une variable le contenue de notre StringVar function2
 
-				if (function2.get() == ''):
+				if (function2.get() == ''): # Si function2 est vide alors on assigne False à notre variable temporaire sinon elle reste égal à ce qu'a rentré l'utilisateur
 					variableFunc = False
-				if(listeState.get() != '' and diff.get() != ''):
-					if (x2.get() == '' and z2.get() == ''):
-						self.box[self.x][self.y].Reponses[bouton].extend = Extension(listeState.get(), diff.get(), (self.x +1), self.box.GetIndice(self.x + 1), variableFunc)
-						self.box.Ajouter(Chainage(Chainage.d_texte, Chainage.d_Reponses, self.box.GetIndice(self.x +1)), self.x + 1)
-						menu_jet.destroy()
-					elif (x2.get() != '' and z2.get() != ''):
-						self.box[self.x][self.y].Reponses[bouton].extend = Extension(listeState.get(), diff.get(), x2.get(), z2.get(), variableFunc)
-						menu_jet.destroy()
+				if(listeState.get() != '' and diff.get() != ''): # 
+					if (x2.get() == '' and z2.get() == ''): # Si l'utilisateur n'a pas rentré de position x et y alors on en créer pour lui
+						self.box[self.x][self.y].Reponses[bouton].extend = Extension(listeState.get(), diff.get(), (self.x +1), self.box.GetIndice(self.x + 1), variableFunc) # On applique le jet configuré à la boite
+						self.box.Ajouter(Chainage(Chainage.d_texte, Chainage.d_Reponses, self.box.GetIndice(self.x +1)), self.x + 1) # On créer un nouveau chainage
+						menu_jet.destroy() # Une fois tout cela appliqué à notre boite on quitte.
+					elif (x2.get() != '' and z2.get() != ''): # Sinon si il à rentré une position x et une position y alors applique sans créer un nouveau chainage
+						self.box[self.x][self.y].Reponses[bouton].extend = Extension(listeState.get(), diff.get(), x2.get(), z2.get(), variableFunc) # On applique le jet configuré à la boite
+						menu_jet.destroy() # Une fois tout cela appliqué à notre boite on quitte.
 
-			def Dejetyfication(bouton):
-				self.box[self.x][self.y].Reponses[bouton].extend = False
-				menu_jet.destroy()
+			def Dejetyfication(bouton): # On créer une fonction pour notre bouton "Supprimer"
+				self.box[self.x][self.y].Reponses[bouton].extend = False # On ajoute à notre
+				menu_jet.destroy() # On ferme la fenêtre de jet
 
-			def ActualiserListe(obj):
-				listeState.set(liste.get(str(obj.widget.curselection()[0])))
+			def ActualiserListe(obj): # On créer une fonction pour indiquer sur qu'elle curseur se trouve la liste (Physique/Social/Mental)
+				listeState.set(liste.get(str(obj.widget.curselection()[0]))) # On actualise notre variable texte contenant l'index sélectionné de la liste
 
 			# Création d'une nouvelle fenètre
-			menu_jet = Toplevel(self.editor)
+			menu_jet = Toplevel(self.editor) # On créer une nouvelle fenêtre par dessus notre fenêtre principale
 			menu_jet['bg']='black' # On met le fond de couleur noir 
-			menu_jet.title("Configuration Jet") # On nomme la fenêtre 
+			menu_jet.title("Configuration Jet n°" + str(bouton + 1)) # On nomme la fenêtre 
 			menu_jet.geometry("300x100") # On définit une taille pour la fenêtre
-			menu_jet.resizable(0,0)
+			menu_jet.resizable(0,0) # on défini que cette fenêtre ne peut pas se redimensionner
 			
-			# ListBox :
+			# ListBox, on créer notre liste :
 			liste = Listbox(menu_jet, height = 3, width = 8)
-			liste.bind('<<ListboxSelect>>', ActualiserListe)
-			liste.insert(1, "Physique")
+			liste.bind('<<ListboxSelect>>', ActualiserListe) # Lorsqu'on clique sur un idex de la liste ça lance la fonction ActualiserListe()
+			liste.insert(1, "Physique") # Dans cette liste il y a trois paramètres : Physique / Mental / Social
 			liste.insert(2, "Mental")
 			liste.insert(3, "Social")
-			doc = {"Social" : 2, "Mental" : 1, "Physique" : 0}
-			liste.grid(rowspan = 3, row = 0, column = 1, sticky = NE)
+			doc = {"Social" : 2, "Mental" : 1, "Physique" : 0} # On créer un dictionaire pour convertir nos str en int (exemple : "Physique" = 0)
+			liste.grid(rowspan = 3, row = 0, column = 1, sticky = NE) # Puis on place notre liste
 
-			# StringVar : 
-			function2 = StringVar() 
-			function2.set('')
-			diff = StringVar() 
+			# On defini nos variables StringVar : 
+			function2 = StringVar() # Si l'utilisateur veut que lorsque le joueur échoue le teste il se passe quelque chose, cette variable contiendra ces informations 
+			# ex : le joueur échoue et perd des points de vies
+			function2.set('') 
+			diff = StringVar() # Contiendra la difficulté du jet
 			diff.set('')
-			x2 = StringVar() 
+			x2 = StringVar() # Contiendra la position x si le personnage échoue
 			x2.set('')
-			z2 = StringVar() 
+			z2 = StringVar() # Contiendra la position y si le personnage échoue
 			z2.set('')
-			listeState = StringVar() 
+			listeState = StringVar() # Contiendra le statu de la liste (Physique, Mental ou Social)
 			listeState.set('')
 			
 			# Boutons :  
-			B_Valider = Button(menu_jet, text = "Valider", fg = 'green',  command = lambda: Valider(bouton)).grid(row = 4, column = 0)
-			B_X = Button(menu_jet, text = "x", fg = 'red', command = lambda: Dejetyfication(bouton)).grid(row = 4, column = 3)
+			B_Valider = Button(menu_jet, text = "Valider", fg = 'green',  command = lambda: Valider(bouton)).grid(row = 4, column = 0) # On créer un bouton valider
+			B_Supprimer = Button(menu_jet, text = "x", fg = 'red', command = lambda: Dejetyfication(bouton)).grid(row = 4, column = 3) # On créer un bouton Supprimer
+			# Le bouton supprimer sert au cas ou l'utilisateur ne veut plus que cette réponse nécessite un jet
 
-			# Entry :
-			E_dificult = Entry(menu_jet, textvariable = diff, bg = 'white', width = 3)
+			# On créer Entry et on les positionnes :
+			E_dificult = Entry(menu_jet, textvariable = diff, bg = 'white', width = 3) # Entry pour la difficulté
 			E_dificult.grid(row = 0, column = 0)
-			E_x2 = Entry(menu_jet, textvariable = x2, bg = 'white', width = 3)
+			E_x2 = Entry(menu_jet, textvariable = x2, bg = 'white', width = 3) # Entry pour la position x
 			E_x2.grid(row = 0, column = 2)
-			E_z2 = Entry(menu_jet, textvariable = z2, bg = 'white', width = 3)
+			E_z2 = Entry(menu_jet, textvariable = z2, bg = 'white', width = 3) # Entry pour la position y
 			E_z2.grid(row = 0, column = 3)
-			E_Function2 = Entry(menu_jet, textvariable = function2, bg = 'white', width = 10)
+			E_Function2 = Entry(menu_jet, textvariable = function2, bg = 'white', width = 10) # Entry pour la fonction lors d'un échec
 			E_Function2.grid(row = 0, column = 4, padx = 10)
+			# Label pour le liste, il sert à afficher l'état de la liste :
 			labelListe = Label(menu_jet, textvariable = listeState, bg = 'white')
 			labelListe.grid(row = 4 , column = 1)
 
-			if( type(self.box[self.x][self.y].Reponses[bouton].extend) == type(Extension(None, None, None, None))): # Si le bouton est deja extend on load :
+			# Si la réponse possède deja un attribu "Jet" on le charge, en assignant chacune de nos variables :
+			if( type(self.box[self.x][self.y].Reponses[bouton].extend) == type(Extension(None, None, None, None))): 
 				diff.set(str(self.box[self.x][self.y].Reponses[bouton].extend.difficult))
 				x2.set(self.box[self.x][self.y].Reponses[bouton].extend.pos2.x)
 				z2.set(self.box[self.x][self.y].Reponses[bouton].extend.pos2.z)
@@ -710,60 +693,62 @@ class Interface:
 				liste.activate(doc[str(self.box[self.x][self.y].Reponses[bouton].extend.carac)])
 				listeState.set(str(liste.get(ACTIVE)))
 			
-
-			menu_jet.mainloop()
-
+			menu_jet.mainloop() # On lance la boucle pour la nouvelle fenêtre créée 
 
 
-	def Mike(self):
-		def Valider():
-			self.box[self.x][self.y].mikeTexte = mikeTexte.get()
-			menu_mike.destroy()
 
-		def Supprimer():
-			self.box[self.x][self.y].mikeTexte = False
-			menu_mike.destroy()
+	def Mike(self): #  Cette fonction est appellé lorsque l'utilisateur appuie sur le bouton "M", qui correspond à Mike
+		# Celle-ci va ouvrir une nouvelle fenêtre avec l'interface pour configurer ce qui dit mike dans cette situation.
+		def Valider(): # Un créer une fonction pour le bouton valider, qui applique les modifications
+			self.box[self.x][self.y].mikeTexte = mikeTexte.get() # On applique le modifications à notre boite
+			menu_mike.destroy() # Puis on détruit la fenêtre
 
-		menu_mike = Toplevel(self.editor)
+		def Supprimer(): # Un créer une fonction pour le bouton supprimer, qui supprime ce que l'utilisateur à rentré
+			self.box[self.x][self.y].mikeTexte = False # Mike ne dira alors rien à ce moment là
+			menu_mike.destroy() # On ferme la fenêtre
+
+		# Création d'une nouvelle fenêtre :
+		menu_mike = Toplevel(self.editor) # On créer une nouvelle fenêtre par dessus notre fenêtre principale
 		menu_mike['bg']='black' # On met le fond de couleur noir 
 		menu_mike.title("Configuration Mike") # On nomme la fenêtre 
 		menu_mike.geometry("400x175") # On définit une taille pour la fenêtre
-		menu_mike.resizable(0,0)
+		menu_mike.resizable(0,0) # Cette fenêtre n'est pas redimensionable
 		
-		mikeTexte = StringVar()
+		mikeTexte = StringVar() # On créer un objet StringVar qui va contenir le texte de mike
 
-		L_MikeTexte = Label(menu_mike, textvariable = mikeTexte, width = 49, height = 8, wraplength = 350)
+		# On place nos widgets :
+		L_MikeTexte = Label(menu_mike, textvariable = mikeTexte, width = 49, height = 8, wraplength = 350) # Label où est affiché le texte que rentre l'utilisateur
 		L_MikeTexte.grid(columnspan = 4, row = 0, column = 0)
-		E_MikeTexte = Entry(menu_mike, textvariable = mikeTexte, width = 49) # Texte du PNJ 
+		E_MikeTexte = Entry(menu_mike, textvariable = mikeTexte, width = 49) # Entry, ou l'utilisateur peut écrire le texte de mike
 		E_MikeTexte.grid(columnspan = 4, row = 1, column = 0)
 
 		# Boutons valider
 		B_MkeValider = Button(menu_mike, text = "Valider", fg = 'green', command = Valider).grid(row = 4, column = 0)
-		B_MkeValider = Button(menu_mike, text = "Supprimer", fg = 'red',command = Supprimer).grid(row = 4, column = 3)
+		B_MkeSupr = Button(menu_mike, text = "Supprimer", fg = 'red',command = Supprimer).grid(row = 4, column = 3)
 
-		if (self.box[self.x][self.y].mikeTexte != False):
+		if (self.box[self.x][self.y].mikeTexte != False): # Si un texte existe déjà alors on le charge :
 			mikeTexte.set(str(self.box[self.x][self.y].mikeTexte))
 
-		menu_mike.mainloop()
+		menu_mike.mainloop() # On lance la boucle pour la nouvelle fenêtre créée 
 
 
 
 	def Menu(self): # Cette fonction sert à retourner au menu
 		self.Save() # On sauvegarde ce que le joueur à fait
 		self.ClearEditeur() # On décharge l'éditeur pour pouvoir charger le menu apres
-		self.debugArray = []
-		self.x = 0
+		self.debugArray = [] # On remet à 0 la liste qui contient où l'utilisateur est allé
+		self.x = 0 # On remet nos position à 0
 		self.y = 0
-		print("\n\n\n\n\n\n\n\n\n\n")
-		self.LoadMenu()
+		print("\n\n\n\n\n\n\n\n\n\n") # On fait des sauts de ligne dans la console pour séparer les infos du fichier précédent avec les nouvelles infos
+		self.LoadMenu() # On charge le menu
 
 
 
-	def LenBoxRep(self):
+	def LenBoxRep(self): # Cette fonction sert à renvoyer le nombres de chainage qui possède des réponses
 		taille = 0
-		for x in range(0, self.box.Lenx()):
-			for y in range(0, len(self.box[x])):
-				if(len(self.box[x][y].Reponses) > 0):
+		for x in range(0, self.box.Lenx()): # Pour chaque colonne
+			for y in range(0, len(self.box[x])): # Et pour chque élement dans ces colonnes
+				if(len(self.box[x][y].Reponses) > 0): # Si le chainage possède au moins une réponse alors on ajoute un a notre variable
 					taille += 1
 		return taille
 
