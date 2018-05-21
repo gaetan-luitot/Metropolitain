@@ -367,23 +367,23 @@ can.append(canI.create_text(50, 285,text='',font=font,fill='WHITE'))
 canI.place_forget()
 
 #Ici, je définis les différents emplacements de réponses. Je fais la boite de dialogue.
-blue = Label(fen,bg='BLACK',width=70, height=20,borderwidth=1)
+blue = Label(fen,bg='BLACK',width=80, height=20,borderwidth=1)
 blue.place(x=5,y=342)
 
 # Réponse 1 :
-Reponse1 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep1, wraplength = 600, fg = "WHITE") #Cadre pour la première réponse. 
+Reponse1 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep1, wraplength = 500, fg = "WHITE") #Cadre pour la première réponse. 
 Reponse1.bind("<Button-1>",lambda event, n = 0: voyage(n))
 Reponse1.place(x = 0, y = 0)
 # Ligne de séparation entre la réponse 1 et la réponse 2 :
 B1 = Label(blue,bg='WHITE',width=80,height=1).place(x=0,y=101) #Séparation entre la première et la deuxième.
 # Réponse 2 :
-Reponse2 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep2, wraplength = 600, fg = "WHITE")#Cadre pour la deuxième réponse.
+Reponse2 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep2, wraplength = 500, fg = "WHITE")#Cadre pour la deuxième réponse.
 Reponse2.bind("<Button-1>",lambda event, n = 1: voyage(n))
 Reponse2.place(x = 0, y = 102)
 # Ligne de séparation entre la réponse 2 et la réponse 3 :
 B2 = Label(blue,bg='WHITE',width=80,height=1).place(x=0,y=202) #Séparation entre la deuxième et la première.
 # Réponse 3 :
-Reponse3 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep3, wraplength = 600, fg = "WHITE")#Cadre pour la troisième réponse.
+Reponse3 = Label(blue, bg="BLACK", width=80, height = 7, borderwidth =1, textvariable = Rep3, wraplength = 500, fg = "WHITE")#Cadre pour la troisième réponse.
 Reponse3.bind("<Button-1>",lambda event, n = 2: voyage(n))
 Reponse3.place(x = 0, y = 203)
 
