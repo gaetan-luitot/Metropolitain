@@ -1,4 +1,6 @@
-from __future__ import division
+######################################
+# Déclaration des Librairies :
+######################################
 from tkinter import * 
 import tkinter 
 import time
@@ -8,20 +10,20 @@ import pickle
 from c_save import Save
 from c_vecteur import Vecteur
 from c_reponse import *
-from os import remove
+from os import remove, system
 from random import randint
 
 
 ######################################
 # Déclaration des Variables :
 ######################################
-fen=Tk()
+fen=Tk() # On créer la fenêtre du jeu
 ind = -1
 font= tkFont.Font(size=14)
 font2= tkFont.Font(size=13)
-can_width = 99
+can_width = 99 
 can_height = 330
-etatB=False
+etatB = False
 Descrip = StringVar()
 Rep1 = StringVar()
 Rep2 = StringVar()
@@ -138,7 +140,7 @@ def Functions(texte):
 def mike():#gif de mike (place ou cache)
     global perso
     if perso.mike == True:
-        BM.place(x=755,y=315)
+        BM.place(x=572,y=343)
         Mikec.place(x= 570, y=342)
         update()
     else:
@@ -330,7 +332,7 @@ fen.protocol("WM_DELETE_WINDOW", SaveAndQuit)
 foreground = tk.Canvas(fen,width= 845,height=330,borderwidth=1, bg = 'black')
 foreground.place(x=5, y=5)
 
-Description = Label(foreground, padx = 20, width= 80,height=11,borderwidth=1,textvariable = Descrip, wraplength = 800, bg = 'black', fg = 'white', font = font10, anchor = W, justify = 'left')
+Description = Label(foreground, padx = 20, width= 65,height=11,borderwidth=1,textvariable = Descrip, wraplength = 800, bg = 'black', fg = 'white', font = font10, anchor = W, justify = 'left')
 Description.place(x=5, y=5)
 
 Mikec = tk.Canvas(fen, width=282, height=300, bg='white')
@@ -388,7 +390,7 @@ Reponse3.bind("<Button-1>",lambda event, n = 2: voyage(n))
 Reponse3.place(x = 0, y = 203)
 
 #bouton inventaire 
-Button(fen,bg='GREY',text='Inventaire',width=10, height=1,borderwidth=1,command=inventaire,font=font2).place(x=8,y=315)
+Button(fen,bg='GREY',text='Inventaire',width=10, height=1,borderwidth=1,command=inventaire,font=font2).place(x=5,y=340)
 
 #caneves game over
 canend= tk.Canvas(fen,width= 860,height=650,borderwidth=1, bg = 'black')
@@ -398,7 +400,7 @@ canend.place_forget()
 
 #button Mike
 BM=Button(fen,bg='GREY',text='Mike',width=10, height=1,borderwidth=1,command=TM,font=font2)
-BM.place(x=755,y=315)
+BM.place(x=572,y=343)
 BM.place_forget()
 
 
@@ -417,3 +419,4 @@ Load() # On essaye de charger une sauvegarde
 AffichageManager() # On affiche la scène où se trouve le joueur
  
 fen.mainloop() # On lance la boucle principale de tkinter
+os.system("pause")

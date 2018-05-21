@@ -500,6 +500,7 @@ class Interface:
 		self.box.New(nomDuFichier) # On créer une nouvelle boite
 		self.ClearMenu() # On désaffiche le menu
 		self.LoadEditeur() # Pour pouvoir afficher l'éditeur de scène
+		self.GetFromBox()
 		print("I: Création du point d'origine [0][0]")
 
 
